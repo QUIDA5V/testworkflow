@@ -1,7 +1,7 @@
 name: First workflow
 
 on:
-  push:
+  [push, workflow_dispatch]:
     branches:
       - main
 
