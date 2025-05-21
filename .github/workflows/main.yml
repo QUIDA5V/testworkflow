@@ -10,10 +10,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     # Choose environment dynamically based on the branch
-    if: github.ref == 'refs/heads/main'
+    if [[ "${GITHUB_REF##*/}" == "main" ]]; then
     environment: PROD
-    if: github.ref == 'refs/heads/dev'
+    elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
     environment: DEV
+    fi
 
     #environment:
     #  name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
