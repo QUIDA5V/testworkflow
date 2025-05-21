@@ -15,8 +15,10 @@ jobs:
         run: |
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
           if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            echo "ACTIVE_SECRET=${{ secrets.ACTIVE_SECRET }}" >> $GITHUB_ENV
             echo "ENV_NAME=production" >> $GITHUB_ENV
           elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
+            echo "ACTIVE_SECRET=${{ secrets.ACTIVE_SECRET }}" >> $GITHUB_ENV
             echo "ENV_NAME=development" >> $GITHUB_ENV
           fi
       - name: Use environment variables
