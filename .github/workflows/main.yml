@@ -25,6 +25,7 @@ jobs:
           echo "Environment: $ENV_NAME"
           echo "Secret in use: $ACTIVE_SECRET"
           echo "Secret in use: ${{secrets.ACTIVE_SECRET}}"
+          echo "Secret in use: ${{env.ACTIVE_SECRET}}"
 
       - name: Checkout code
         uses: actions/checkout@v3
