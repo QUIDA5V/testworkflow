@@ -69,5 +69,10 @@
             <artifactId>dynamodb-enhanced</artifactId>
             <version>2.30.16</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
