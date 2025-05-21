@@ -9,16 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Choose environment dynamically based on the branch
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
 
     steps:
-      - name: Set env vars based on branch
-        run: |
-          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
-            echo "ENV_NAME=PROD" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
-            echo "ENV_NAME=development" >> $GITHUB_ENV
-          fi
       - name: Use environment variables
         run: |
           echo "Running on branch: $BRANCH"
