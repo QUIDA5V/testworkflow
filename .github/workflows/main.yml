@@ -24,3 +24,4 @@ jobs:
 
       - name: Build Spring Boot App
         run: mvn clean install
+        working-directory: pic
