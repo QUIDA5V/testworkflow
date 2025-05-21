@@ -1,9 +1,10 @@
 name: First workflow
 
 on:
-  [push, workflow_dispatch]:
+  push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
