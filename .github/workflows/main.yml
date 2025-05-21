@@ -16,7 +16,7 @@ jobs:
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
           if [[ "${GITHUB_REF##*/}" == "main" ]]; then
             echo "ACTIVE_SECRET=${{ secrets.ACTIVE_SECRET }}" >> $GITHUB_ENV
-            echo "ENV_NAME=production" >> $GITHUB_ENV
+            echo "ENV_NAME=PROD" >> $GITHUB_ENV
           elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
             echo "ACTIVE_SECRET=${{ secrets.ACTIVE_SECRET }}" >> $GITHUB_ENV
             echo "ENV_NAME=development" >> $GITHUB_ENV
@@ -26,6 +26,7 @@ jobs:
           echo "Running on branch: $BRANCH"
           echo "Environment: $ENV_NAME"
           echo "Secret in use: $ACTIVE_SECRET"
+          echo "Secret in use: ${{secrets.ACTIVE_SECRET}}"
 
       - name: Checkout code
         uses: actions/checkout@v3
