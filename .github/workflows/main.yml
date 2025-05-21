@@ -23,4 +23,4 @@ jobs:
         run: echo "Hello from GitHub Actions 🚀"
 
       - name: Build Spring Boot App
-        run: ./mvnw clean install
+        run: mvn clean install
