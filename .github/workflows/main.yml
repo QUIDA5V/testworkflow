@@ -60,7 +60,7 @@ jobs:
 
       - name: Build Project
         run: mvn clean package -DskipTests=true
-        working-directory: pic
+        ##working-directory: pic
 
   create-docker-image:
     runs-on: ubuntu-latest
@@ -85,7 +85,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./pic
-          file: /Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-app:latest
