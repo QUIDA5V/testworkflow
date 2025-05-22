@@ -2,7 +2,7 @@
 FROM eclipse-temurin:21-jdk-alpine
 
 # Set the working directory
-WORKDIR /pic
+WORKDIR /app
 
 # Copy the JAR file into the container
 COPY target/pic-1.0-SNAPSHOT.jar.jar app.jar
