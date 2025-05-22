@@ -86,6 +86,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          ##file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-app:latest
