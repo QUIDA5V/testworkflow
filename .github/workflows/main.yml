@@ -62,7 +62,7 @@ jobs:
         run: mvn clean package -DskipTests=true
         ##working-directory: pic
 
-  create-docker-image:
+  build-push-docker-image:
     runs-on: ubuntu-latest
     needs: build
 
