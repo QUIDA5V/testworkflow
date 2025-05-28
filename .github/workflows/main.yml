@@ -100,4 +100,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/myrepository:version
+          tags: ${{ secrets.DOCKER_USERNAME }}/myrepository:ve
