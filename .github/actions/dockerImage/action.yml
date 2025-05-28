@@ -12,6 +12,7 @@ runs:
   steps:
     - name: Say Username
       run: echo inputs.docker_username
+      shell: bash
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
