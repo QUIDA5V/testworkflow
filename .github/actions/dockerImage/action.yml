@@ -9,10 +9,10 @@ runs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
+    - name: Build and Push Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/myrepository:testing
+        tags: ${{ secrets.DOCKER_USERNAME }}/va:testing
