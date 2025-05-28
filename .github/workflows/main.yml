@@ -84,6 +84,11 @@ jobs:
 
       #- name: Set up Docker Buildx
       #  uses: docker/setup-buildx-action@v3
+      - name: Say Username
+        run: echo ${{ secrets.DOCKER_USERNAME }}
+
+      - name: Say Pwd
+        run: echo ${{ secrets.DOCKER_PASSWORD }}
 
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
