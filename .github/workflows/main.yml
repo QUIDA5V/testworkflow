@@ -93,5 +93,5 @@ jobs:
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
         with:
-          dockerusername: ${{ secrets.DOCKER_USERNAME }}
-          dockerpassword: ${{ secrets.DOCKER_PASSWORD }}
+          dockerusername: dquinonezlib
+          dockerpassword: Verano2024!!
