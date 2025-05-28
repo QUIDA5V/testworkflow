@@ -15,4 +15,4 @@ runs:
         context: .
         file: Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/myrepository:ves
+        tags: ${{ secrets.DOCKER_USERNAME }}/myrepository:testing
