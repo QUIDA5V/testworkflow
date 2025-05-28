@@ -1,13 +1,20 @@
 name: "Create docker image & push to "
 description: "Create docker image and push to "
+inputs:
+  docker_username:
+    description: "username of docker account"
+    required: true
+  docker_password:
+    description: "password of docker account"
+    required: true
 runs:
   using: "composite"
   steps:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: inputs.docker_username
+        password: inputs.docker_password
 
     - name: Build and Push Docker image
       uses: docker/build-push-action@v5
@@ -15,4 +22,4 @@ runs:
         context: .
         file: Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/va:testing
+        tags: inputs.docker_username/va:testing
