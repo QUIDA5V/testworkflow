@@ -11,7 +11,7 @@ runs:
   using: "composite"
   steps:
     - name: Say Username
-      run: echo inputs.docker_username
+      run: echo "The message is ${{ inputs.docker_username }}"
       shell: bash
 
     - name: Log in to Docker Hub
