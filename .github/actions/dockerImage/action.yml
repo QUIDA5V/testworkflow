@@ -1,5 +1,5 @@
-name: "Create docker image & push to "
-description: "Create docker image and push to "
+name: "Build and push to docker repo"
+description: "Create a docker image and push to docker repo"
 inputs:
   docker_username:
     description: "username of docker account"
@@ -7,13 +7,16 @@ inputs:
   docker_password:
     description: "password of docker account"
     required: true
+  repository_name:
+    description: "name of the repository"
+    required: true
+  tag:
+    description: "tag of the image"
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
-    - name: Say Username
-      run: echo "The message is ${{ inputs.docker_username }}"
-      shell: bash
-
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -26,4 +29,4 @@ runs:
         context: .
         file: Dockerfile
         push: true
-        tags: inputs.docker_username/va:testing
+        tags: ${{ inputs.repository_name }}/${{ inputs.tag }}
