@@ -87,11 +87,11 @@ jobs:
       - name: Say Username
         run: echo ${{ secrets.DOCKER_USERNAME }}
 
-      - name: Say Pwd
+      - name: Say Pwds
         run: echo ${{ secrets.DOCKER_PASSWORD }}
 
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
         with:
-          dockerusername: "dquinonezlib"
-          dockerpassword: "Verano2024!!"
+          docker_username: "dquinonezlib"
+          docker_password: "Verano2024!!"
