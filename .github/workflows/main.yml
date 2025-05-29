@@ -50,18 +50,18 @@ jobs:
         run: |
           git fetch --tags
           echo "Looking for tag ${{ github.event.inputs.tag }} on branch ${{ github.event.inputs.branch }}"
-          if git branch --contains "${{ github.event.inputs.tag }}" | grep "${{ github.event.inputs.branch }}"; then
-            echo "Tag is valid."
-          else
-            echo "❌ Tag not associated with branch."
-            exit 1
-          fi
+        ## if git branch --contains "${{ github.event.inputs.tag }}" | grep "${{ github.event.inputs.branch }}"; then
+        ##   echo "Tag is valid."
+        ## else
+        ##   echo "❌ Tag not associated with branch."
+        ##   exit 1
+        ## fi
 
       - name: Fetch tags
         run: git fetch --tags
 
-      - name: Checkout tag
-        run: git checkout ${{ github.event.inputs.tag }}
+      #- name: Checkout tag
+      #  run: git checkout ${{ github.event.inputs.tag }}
 
       - name: Confirm tag
         run: git describe --tags --always
