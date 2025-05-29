@@ -15,10 +15,10 @@ on:
         options:
           - dev
           - PROD
-      tag:
-        description: "Enter tag name"
-        required: false
-        default: "notag"
+  #    tag:
+  #      description: "Enter tag name"
+  #      required: false
+  #      default: v1
 
 jobs:
   test:
