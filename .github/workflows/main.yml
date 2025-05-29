@@ -92,7 +92,7 @@ jobs:
 
       - name: create image and push to docker repo
         #uses: ./.github/actions/dockerImage
-        uses: QUIDA5V/actions@main
+        uses: QUIDA5V/actions/docker@main
         with:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
