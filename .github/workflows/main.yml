@@ -14,7 +14,7 @@ on:
         type: choice
         options:
           - dev
-          - PROD
+          - prod
   #    tag:
   #      description: "Enter tag name"
   #      required: false
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     # Choose environment dynamically based on the branch
     environment: |-
-      ${{  github.ref_name == 'main' && 'PROD' || github.ref_name == 'dev' && 'dev' || 'staging' }}
+      ${{  github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'staging' }}
 
     #environment:
     #  name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
@@ -105,9 +105,16 @@ jobs:
     needs: build
 
     environment: |-
-      ${{  github.ref_name == 'main' && 'PROD' || github.ref_name == 'dev' && 'dev' || 'staging' }}
+      ${{  github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'staging' }}
 
     steps:
+      - name: Show selected environment
+        run: echo "Deploying to ${{ inputs.environment }} environment"
+
+      - name: Use environment variables
+        run: |
+          echo "Running on branch: ${GITHUB_REF##*/}"
+
       - name: Checkout code
         uses: actions/checkout@v3
 
