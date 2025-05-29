@@ -91,9 +91,10 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }}
 
       - name: create image and push to docker repo
-        uses: ./.github/actions/dockerImage
+        #uses: ./.github/actions/dockerImage
+        uses: QUIDA5V/actions
         with:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_name: "myrepository"
-          tag: "mytags"
+          tag: "myfinaltag"
