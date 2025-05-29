@@ -6,6 +6,15 @@ on:
       - main
       - dev
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Choose environment"
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - PROD
 
 jobs:
   test:
@@ -18,6 +27,9 @@ jobs:
     #  name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
 
     steps:
+      - name: Show selected environment
+        run: echo "Deploying to ${{ inputs.environment }} environment"
+
       - name: Use environment variables
         run: |
           echo "Running on branch: ${GITHUB_REF##*/}"
