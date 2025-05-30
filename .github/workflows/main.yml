@@ -43,8 +43,8 @@ jobs:
 
       - name: Show selected environment
         run: echo "Deploying to ${{ inputs.environment }} environment"
-          echo "$GLOBAL_ENV"
-          echo "$BRANCH_NAME"
+          echo "Environment name is ${{ env.GLOBAL_ENV }}"
+          echo "Branch name is ${{ env.BRANCH_NAME }}"
 
       - name: Use environment variables
         run: |
@@ -98,8 +98,8 @@ jobs:
     steps:
       - name: Show selected environment
         run: echo "Deploying to ${{ inputs.environment }} environment"
-          echo "$GLOBAL_ENV"
-          echo "$BRANCH_NAME"
+          echo "Environment name is ${{ env.GLOBAL_ENV }}"
+          echo "Branch name is ${{ env.BRANCH_NAME }}"
 
       - name: Checkout code
         uses: actions/checkout@v3
