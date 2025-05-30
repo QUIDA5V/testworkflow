@@ -20,10 +20,10 @@ on:
   #      required: false
   #      default: v1
 
-env:
-  GLOBAL_ENV: ""
-  GLOBAL_BRANCH: ""
-  TYPE: ""
+#env:
+#  GLOBAL_ENV: ""
+#  GLOBAL_BRANCH: ""
+#  TYPE: ""
 
 jobs:
   test:
