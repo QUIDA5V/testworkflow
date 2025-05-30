@@ -30,10 +30,12 @@ runs:
       uses: "google-github-actions/setup-gcloud@v2"
 
     - name: Configure Docker
+      shell: bash
       run: |
         gcloud auth configure-docker us-central1-docker.pkg.dev
 
     - name: Build and Push Docker Image
+      shell: bash
       run: |
         docker build -t  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }} -f Dockerfile .
         docker push  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }}
