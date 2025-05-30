@@ -1,14 +1,17 @@
 name: "Build and push to docker repo"
 description: "Create a docker image and push to docker repo"
 inputs:
-  docker_username:
-    description: "username of docker account"
+  gcp_sa_key:
+    description: "key"
     required: true
-  docker_password:
-    description: "password of docker account"
+  gcp_project_id:
+    description: "project id"
     required: true
-  repository_name:
-    description: "name of the repository"
+  registry:
+    description: "registry of the repository"
+    required: true
+  image_name:
+    description: "name of the image"
     required: true
   tag:
     description: "tag of the image"
@@ -17,16 +20,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ inputs.docker_username }}
-        password: ${{ inputs.docker_password }}
+    - name: Authenticate to GCP
+      run: |
+        echo "${{ inputs.gcp_sa_key }}" > key.json
+        gcloud auth activate-service-account --key-file=key.json
+        gcloud config set project ${{ inputs.gcp_project_id }}
+      shell: bash
 
-    - name: Build and Push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: Dockerfile
-        push: true
-        tags: ${{ inputs.docker_username }}/${{ inputs.repository_name }}:${{ inputs.tag }}
+    - name: Configure Docker for GCP
+      run: |
+        gcloud auth configure-docker --quiet
+      shell: bash
+
+    - name: Build Docker Image
+      run: |
+        docker build -t ${{ inputs.registry }}/${{ inputs.image_name }}:latest .
+      shell: bash
+
+    - name: Push Docker Image
+      run: |
+        docker push ${{ inputs.registry }}/${{ inputs.image_name }}:latest
+      shell: bash
