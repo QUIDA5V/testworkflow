@@ -7,8 +7,11 @@ inputs:
   gcp_project_id:
     description: "project id"
     required: true
-  docker_url_registry:
-    description: "url registry of the repository"
+  docker_registry:
+    description: "docker registry"
+    required: true
+  repository_url:
+    description: "url of the repository"
     required: true
   image_name:
     description: "name of the image"
@@ -29,13 +32,13 @@ runs:
     - name: Set up Cloud SDK
       uses: "google-github-actions/setup-gcloud@v2"
 
-    #- name: Configure Docker
-    #  shell: bash
-    #  run: |
-    #    gcloud auth configure-docker us-central1-docker.pkg.dev
+    - name: Configure Docker
+      shell: bash
+      run: |
+        gcloud auth configure-docker ${{ inputs.docker_registry }}
 
     - name: Build and Push Docker Image
       shell: bash
       run: |
-        docker build -t  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }} -f Dockerfile .
-        docker push  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }}
+        docker build -t  ${{ inputs.repository_url }}/${{ inputs.image_name }}:${{ inputs.tag }} -f Dockerfile .
+        docker push  ${{ inputs.repository_url }}/${{ inputs.image_name }}:${{ inputs.tag }}
