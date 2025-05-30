@@ -150,8 +150,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t "dockerimageurl":latest -f Dockerfile .
-          docker push "dockerimageurl":latest
+          docker build -t "us-central1-docker.pkg.dev/back-438814/dummytest":latest -f Dockerfile .
+          docker push "us-central1-docker.pkg.dev/back-438814/dummytest":latest
 
       - name: Authenticate to GCP
         run: |
