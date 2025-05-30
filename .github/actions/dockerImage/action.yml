@@ -20,32 +20,20 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Google Cloud Auth
+      uses: "google-github-actions/auth@v2"
+      with:
+        credentials_json: "${{ secrets.JSONKEY }}"
+        project_id: "back-438814"
 
-    -name: test
-    -uses: google-github-actions/setup-gcloud@v1
-     with:
-       project_id: your-project-id
-       service_account_key: ${{ secrets.GCP_KEY }}
-       export_default_credentials: true
-       
-    - name: Authenticate to GCP
-      run: |
-        echo "${{ inputs.gcp_sa_key }}" > key.json
-        gcloud auth activate-service-account --key-file=key.json
-        gcloud config set project ${{ inputs.gcp_project_id }}
-      shell: bash
+    - name: Set up Cloud SDK
+      uses: "google-github-actions/setup-gcloud@v2"
 
-    - name: Configure Docker for GCP
+    - name: Configure Docker
       run: |
-        gcloud auth configure-docker --quiet
-      shell: bash
+        gcloud auth configure-docker us-central1-docker.pkg.dev
 
-    - name: Build Docker Image
+    - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ inputs.registry }}/${{ inputs.image_name }}:latest .
-      shell: bash
-
-    - name: Push Docker Image
-      run: |
-        docker push ${{ inputs.registry }}/${{ inputs.image_name }}:latest
-      shell: bash
+        docker build -t "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest -f Dockerfile .
+        docker push "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest

@@ -135,36 +135,12 @@ jobs:
       - name: Say Pwds
         run: echo ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Google Cloud Auth
-        uses: "google-github-actions/auth@v2"
-        with:
-          credentials_json: "${{ secrets.JSONKEY }}"
-          project_id: "back-438814"
-
-      - name: Set up Cloud SDK
-        uses: "google-github-actions/setup-gcloud@v2"
-
-      - name: Configure Docker
-        run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
-
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest -f Dockerfile .
-          docker push "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest
-
-      - name: Authenticate to GCP
-        run: |
-          echo "${{ secrets.JSONKEY }}" > key.json
-          gcloud auth activate-service-account --key-file=key.json
-          gcloud config set project "back-438814"
-
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
         #uses: QUIDA5V/actions/docker@main
         with:
           gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
-          registry: "myrepository"
-          image_name: "myimage"
-          tag: "myfinaltag"
+          docker_url_registry: "us-central1-docker.pkg.dev/back-438814/dummytest"
+          image_name: "ultima"
+          tag: "tag"
