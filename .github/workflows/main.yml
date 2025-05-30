@@ -141,6 +141,18 @@ jobs:
           credentials_json: "${{ secrets.JSONKEY }}"
           project_id: "back-438814"
 
+      - name: Set up Cloud SDK
+        uses: "google-github-actions/setup-gcloud@v2"
+
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t "dockerimageurl":latest -f Dockerfile.prod .
+          docker push "dockerimageurl":latest
+
       - name: Authenticate to GCP
         run: |
           echo "${{ secrets.JSONKEY }}" > key.json
