@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Run only on manual trigger
         if: github.event_name == 'workflow_dispatch'
-        run: eecho "GLOBAL_ENV=${{ inputs.environment }}" >> $GITHUB_ENV
+        run: echo "GLOBAL_ENV=${{ inputs.environment }}" >> $GITHUB_ENV
           echo "This was a manual run."
 
       - name: Show selected environment
