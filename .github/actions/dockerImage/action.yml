@@ -29,10 +29,10 @@ runs:
     - name: Set up Cloud SDK
       uses: "google-github-actions/setup-gcloud@v2"
 
-    - name: Configure Docker
-      shell: bash
-      run: |
-        gcloud auth configure-docker us-central1-docker.pkg.dev
+    #- name: Configure Docker
+    #  shell: bash
+    #  run: |
+    #    gcloud auth configure-docker us-central1-docker.pkg.dev
 
     - name: Build and Push Docker Image
       shell: bash

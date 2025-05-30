@@ -142,5 +142,5 @@ jobs:
           gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
           docker_url_registry: "us-central1-docker.pkg.dev/back-438814/dummytest"
-          image_name: "ultima"
-          tag: "tag"
+          image_name: "newimag"
+          tag: "thistag"
