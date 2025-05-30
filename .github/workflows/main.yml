@@ -135,6 +135,12 @@ jobs:
       - name: Say Pwds
         run: echo ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Authenticate to GCP
+        run: |
+          echo "${{ secrets.JSONKEY }}" > key.json
+          gcloud auth activate-service-account --key-file=key.json
+          gcloud config set project "back-438814"
+
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
         #uses: QUIDA5V/actions/docker@main
