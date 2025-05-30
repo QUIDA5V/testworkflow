@@ -20,6 +20,11 @@ on:
   #      required: false
   #      default: v1
 
+env:
+  GLOBAL_ENV: ""
+  GLOBAL_BRANCH: ""
+  TYPE: ""
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -27,10 +32,16 @@ jobs:
     environment: |-
       ${{  github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'staging' }}
 
-    #environment:
-    #  name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
-
     steps:
+      - name: Run only on manual trigger
+        if: github.event_name == 'workflow_dispatch'
+        run: echo ${{ inputs.environment }} >> $GLOBAL_ENV
+        run: echo "Manual" >> $TYPE
+        run: echo "This was a manual run."
+
+      - name: Print global variable
+        run: echo "$GLOBAL_ENV" "$GLOBAL_BRANCH"
+
       - name: Show selected environment
         run: echo "Deploying to ${{ inputs.environment }} environment"
 
@@ -135,13 +146,3 @@ jobs:
       - name: Say Pwds
         run: echo ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: create image and push to docker repo
-        uses: ./.github/actions/dockerImage
-        #uses: QUIDA5V/actions/docker@main
-        with:
-          gcp_sa_key: ${{ secrets.JSONKEY }}
-          gcp_project_id: "back-438814"
-          repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
-          docker_registry: "us-central1-docker.pkg.dev"
-          image_name: "newimag"
-          tag: "thistag"
