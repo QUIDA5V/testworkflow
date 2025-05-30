@@ -161,7 +161,7 @@ jobs:
 
       - name: create image and push to docker repo
         uses: ./.github/actions/dockerImage
-        #uses: QUIDA5V/actions/docker@main
+        #suses: QUIDA5V/actions/docker@main
         with:
           gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
