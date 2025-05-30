@@ -22,8 +22,8 @@ runs:
   steps:
     - name: Authenticate to GCP
       run: |
-        echo "${{ inputs.gcp_sa_key }}" > key.json
-        gcloud auth activate-service-account --key-file='${{ inputs.gcp_sa_key }}'
+        echo ${{ inputs.gcp_sa_key }} > key.json
+        gcloud auth activate-service-account --key-file=key.json
         gcloud config set project ${{ inputs.gcp_project_id }}
       shell: bash
 
