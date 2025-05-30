@@ -7,8 +7,8 @@ inputs:
   gcp_project_id:
     description: "project id"
     required: true
-  registry:
-    description: "registry of the repository"
+  docker_url_registry:
+    description: "url registry of the repository"
     required: true
   image_name:
     description: "name of the image"
@@ -23,8 +23,8 @@ runs:
     - name: Google Cloud Auth
       uses: "google-github-actions/auth@v2"
       with:
-        credentials_json: "${{ secrets.JSONKEY }}"
-        project_id: "back-438814"
+        credentials_json: "${{ inputs.gcp_sa_key }}"
+        project_id: ${{ inputs.gcp_project_id }}
 
     - name: Set up Cloud SDK
       uses: "google-github-actions/setup-gcloud@v2"
@@ -35,5 +35,5 @@ runs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest -f Dockerfile .
-        docker push "us-central1-docker.pkg.dev/back-438814/dummytest/myimage":latest
+        docker build -t  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }} -f Dockerfile .
+        docker push  ${{ inputs.docker_url_registry }}/${{ inputs.image_name }}:${{ inputs.tag }}
