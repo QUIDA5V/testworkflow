@@ -139,7 +139,7 @@ jobs:
         uses: ./.github/actions/dockerImage
         #uses: QUIDA5V/actions/docker@main
         with:
-          gcp_sa_key: "24ceb637ef5180d3febc6486989ebc03f31aaab8"
+          gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
           registry: "myrepository"
           image_name: "myimage"
