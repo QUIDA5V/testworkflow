@@ -39,11 +39,9 @@ jobs:
           echo "Manual" >> $TYPE
           echo "This was a manual run."
 
-      - name: Print global variable
-        run: echo "$GLOBAL_ENV" "$GLOBAL_BRANCH"
-
       - name: Show selected environment
         run: echo "Deploying to ${{ inputs.environment }} environment"
+          echo ${{ env.GLOBAL_ENV }} ${{ env.GLOBAL_BRANCH }}
 
       - name: Use environment variables
         run: |
