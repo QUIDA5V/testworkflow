@@ -36,8 +36,8 @@ jobs:
       - name: Run only on manual trigger
         if: github.event_name == 'workflow_dispatch'
         run: echo ${{ inputs.environment }} >> $GLOBAL_ENV
-        run: echo "Manual" >> $TYPE
-        run: echo "This was a manual run."
+          echo "Manual" >> $TYPE
+          echo "This was a manual run."
 
       - name: Print global variable
         run: echo "$GLOBAL_ENV" "$GLOBAL_BRANCH"
@@ -145,4 +145,3 @@ jobs:
 
       - name: Say Pwds
         run: echo ${{ secrets.DOCKER_PASSWORD }}
-
