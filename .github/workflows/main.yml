@@ -37,7 +37,7 @@ jobs:
         run: echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
       - id: set-env
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_name }}" = "main" ]; then
             echo "envName=prod" >> $GITHUB_OUTPUT
