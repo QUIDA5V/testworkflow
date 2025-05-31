@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branchName: ${{ steps.set-branch.outputs.branchName }}
-      envName: ${{ steps.set-branch.outputs.envName }}
+      envName: ${{ steps.set-env.outputs.envName }}
 
     steps:
       - id: set-branch
