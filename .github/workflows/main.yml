@@ -39,9 +39,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref_name }}" = "main" ]; then
+          elif [ "${{ github.ref_name }}" == "main" ]; then
             echo "envName=prod" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref_name }}" = "dev" ]; then
+          elif [ "${{ github.ref_name }}" == "dev" ]; then
             echo "envName=dev" >> $GITHUB_OUTPUT
           else
             echo "envName=staging" >> $GITHUB_OUTPUT
