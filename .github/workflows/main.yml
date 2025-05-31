@@ -66,6 +66,7 @@ jobs:
     steps:
       - name: Print global env in job one
         run: echo "Job One is running on ${{ env.GLOBAL_ENV }}"
+          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
           echo "TAG running on ${{ env.GLOBAL_TAG }}"
 
   test:
