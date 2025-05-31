@@ -26,6 +26,31 @@ on:
 #  TYPE: ""
 
 jobs:
+  set-vars:
+    runs-on: ubuntu-latest
+    outputs:
+      branchName: ${{ steps.set-branch.outputs.branchName }}
+      envName: ${{ steps.set-branch.outputs.envName }}
+
+    steps:
+      - id: set-branch
+        run: echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+      - id: set-env
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "envName=${{  github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'staging' }}" >> $GITHUB_OUTPUT
+
+  job-one:
+    runs-on: ubuntu-latest
+    needs: set-vars
+    env:
+      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
+      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
+    steps:
+      - name: Print global env in job one
+        run: echo "Job One is running on $GLOBAL_ENV"
+
   test:
     runs-on: ubuntu-latest
     # Choose environment dynamically based on the branch
