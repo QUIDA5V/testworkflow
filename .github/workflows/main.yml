@@ -36,10 +36,16 @@ jobs:
       - id: set-branch
         run: echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
       - id: set-env
-        if: github.event_name == 'workflow_dispatch'
-        run: echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
-        if: github.event_name != 'workflow_dispatch'
-        run: echo "envName=${{  github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'staging' }}" >> $GITHUB_OUTPUT
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            echo "envName=prod" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" = "dev" ]; then
+            echo "envName=dev" >> $GITHUB_OUTPUT
+          else
+            echo "envName=staging" >> $GITHUB_OUTPUT
+          fi
 
   job-one:
     runs-on: ubuntu-latest
