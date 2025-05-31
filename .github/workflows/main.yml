@@ -15,10 +15,10 @@ on:
         options:
           - dev
           - prod
-  #    tag:
-  #      description: "Enter tag name"
-  #      required: false
-  #      default: v1
+      tag:
+        description: "Enter tag name"
+        required: false
+        default: v1
 
 #env:
 #  GLOBAL_ENV: ""
@@ -31,6 +31,7 @@ jobs:
     outputs:
       branchName: ${{ steps.set-branch.outputs.branchName }}
       envName: ${{ steps.set-env.outputs.envName }}
+      tagName: ${{ steps.set-tag.outputs.tagName }}
 
     steps:
       - id: set-branch
@@ -46,6 +47,11 @@ jobs:
           else
             echo "envName=staging" >> $GITHUB_OUTPUT
           fi
+      - id: set-tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "tagName=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          fi
 
   job-one:
     runs-on: ubuntu-latest
@@ -53,9 +59,11 @@ jobs:
     env:
       GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
       GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
+      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
     steps:
       - name: Print global env in job one
         run: echo "Job One is running on ${{ env.GLOBAL_ENV }}"
+          echo "TAG running on ${{ env.GLOBAL_TAG }}"
 
   test:
     runs-on: ubuntu-latest
