@@ -55,7 +55,7 @@ jobs:
       GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
     steps:
       - name: Print global env in job one
-        run: echo "Job One is running on $GLOBAL_ENV"
+        run: echo "Job One is running on ${{ env.GLOBAL_ENV }}"
 
   test:
     runs-on: ubuntu-latest
