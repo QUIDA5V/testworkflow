@@ -6,6 +6,13 @@ on:
       - main
       - dev
   workflow_dispatch:
+    branches:
+      - main
+      - release/*
+    tags:
+      - v* # Matches tags like v1.0.0, v2.3.1
+      - release-* # Matches tags like release-2024-01
+
     inputs:
       environment:
         description: "Choose environment"
@@ -15,10 +22,6 @@ on:
         options:
           - dev
           - prod
-      tag:
-        description: "Enter tag name"
-        required: false
-        default: v1
 
 #env:
 #  GLOBAL_ENV: ""
@@ -50,7 +53,7 @@ jobs:
       - id: set-tag
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "tagName=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+            echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
 
   job-one:
