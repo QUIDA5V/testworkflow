@@ -122,6 +122,7 @@ jobs:
         ##working-directory: pic
 
   build-push-docker-images-prod:
+    needs: [build, set-vars]
     if: ${{ needs.set-vars.outputs.envName == 'prod' }}
     environment: prod
     runs-on: ubuntu-latest
