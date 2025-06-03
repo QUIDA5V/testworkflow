@@ -143,3 +143,26 @@ jobs:
           docker_registry: "us-central1-docker.pkg.dev"
           image_name: "newimag"
           tag: "finaltag"
+
+  build-push-docker-images-dev:
+    needs: [build, set-vars]
+    if: ${{ needs.set-vars.outputs.envName == 'dev' }}
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Project
+        run: mvn clean package -DskipTests=true
+
+      - name: create image and push to docker repo
+        #uses: ./.github/actions/dockerImage
+        uses: QUIDA5V/actions/docker@main
+        with:
+          gcp_sa_key: ${{ secrets.JSONKEY }}
+          gcp_project_id: "back-438814"
+          repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
+          docker_registry: "us-central1-docker.pkg.dev"
+          image_name: "newimag"
+          tag: "finaltag"
