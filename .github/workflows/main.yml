@@ -163,7 +163,7 @@ jobs:
         run: mvn clean package -DskipTests=true
 
       - name: create image and push to docker repo
-        #uses: ./.github/actions/dockerImage
+        ##uses: ./.github/actions/dockerImage
         uses: QUIDA5V/actions/docker@main
         with:
           gcp_sa_key: ${{ secrets.JSONKEY }}
