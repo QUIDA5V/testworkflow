@@ -137,7 +137,7 @@ jobs:
         #uses: ./.github/actions/dockerImage
         uses: QUIDA5V/actions/docker@main
         with:
-          gcp_sa_key: ${{ env.GLOBAL_ENV.secrets.JSONKEY }}
+          gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
           repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
           docker_registry: "us-central1-docker.pkg.dev"
