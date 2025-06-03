@@ -6,9 +6,9 @@ on:
       - main
       - dev
   workflow_dispatch:
-    #branches:
-    #   - main
-    #   - release/*
+    branches:
+      - main
+      - release/*
     tags:
       - v* # Matches tags like v1.0.0, v2.3.1
       - release-* # Matches tags like release-2024-01
@@ -27,22 +27,21 @@ jobs:
   set-vars:
     runs-on: ubuntu-latest
     outputs:
-      branchName: ${{ steps.set-branch-or-tag.outputs.branchName }}
+      branchName: ${{ steps.set-env.outputs.branchName }}
       envName: ${{ steps.set-env.outputs.envName }}
-      tagName: ${{ steps.set-branch-or-tag.outputs.tagName }}
+      tagName: ${{ steps.set-tag.outputs.tagName }}
 
     steps:
-      - id: set-branch-or-tag
+      - id: set-tag
         run: |
-          if [ "${{ github.ref_type }}" = "branch" ]; then
-              echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          else
+          if [ "${{ github.ref_type }}" = "tag" ]; then
               echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
       - id: set-env
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "branchName=${{ inputs.environment == 'prod' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_name }}" == "main" ]; then
             echo "envName=prod" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_name }}" == "dev" ]; then
