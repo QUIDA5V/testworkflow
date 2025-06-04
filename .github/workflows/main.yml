@@ -174,5 +174,5 @@ jobs:
           gcp_project_id: "back-438814"
           repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
           docker_registry: "us-central1-docker.pkg.dev"
-          image_name: "newimag"
-          tag: "finaltag"
+          image_name: "demoimage"
+          tag: "v9"
