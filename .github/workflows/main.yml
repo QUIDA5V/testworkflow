@@ -3,7 +3,7 @@ name: SetUP Environments
 on:
   on-merge:
     if: github.event.pull_request.merged == true
-    ##push:
+    #push:
     branches:
       - main
       - dev
