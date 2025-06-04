@@ -28,7 +28,7 @@ on:
 
 jobs:
   set-vars:
-    if: github.event.pull_request.merged == true
+    #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       branchName: ${{ steps.set-branch.outputs.branchName }}
@@ -38,7 +38,7 @@ jobs:
     steps:
       - id: set-tag
         run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
+          if [ "${{ github.ref_type }}" == "tag" ]; then
               echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
       - id: set-env
@@ -151,8 +151,8 @@ jobs:
           gcp_project_id: "back-438814"
           repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
           docker_registry: "us-central1-docker.pkg.dev"
-          image_name: "newimag"
-          tag: "finaltag"
+          image_name: "demo_image"
+          tag: "v9"
 
   build-push-docker-images-dev:
     needs: [build, set-vars]
@@ -167,12 +167,12 @@ jobs:
         run: mvn clean package -DskipTests=true
 
       - name: create image and push to docker repo
-        ##uses: ./.github/actions/dockerImage
+        #uses: ./.github/actions/dockerImage
         uses: QUIDA5V/actions/docker@main
         with:
           gcp_sa_key: ${{ secrets.JSONKEY }}
           gcp_project_id: "back-438814"
           repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
           docker_registry: "us-central1-docker.pkg.dev"
-          image_name: "newimag"
-          tag: "finaltag"
+          image_name: "demo_image"
+          tag: "v9"
