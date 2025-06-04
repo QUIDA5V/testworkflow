@@ -38,7 +38,7 @@ jobs:
     steps:
       - id: set-tag
         run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
+          if [ "${{ github.ref_type }}" == "tag" ]; then
               echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
       - id: set-env
