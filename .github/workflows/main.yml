@@ -1,8 +1,8 @@
 name: SetUP Environments
 
 on:
-  on-merge:
-    if: github.event.pull_request.merged == true
+  pull_request:
+    types: [closed]
     #push:
     branches:
       - main
@@ -28,6 +28,7 @@ on:
 
 jobs:
   set-vars:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       branchName: ${{ steps.set-branch.outputs.branchName }}
