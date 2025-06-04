@@ -1,30 +1,94 @@
-name: First workflow
+name: SetUP Environments
 
 on:
-  push:
+  pull_request:
+    types: [closed]
+    #push:
     branches:
       - main
+      - dev
   workflow_dispatch:
+    branches:
+      - main
+      - dev
+      - release/*
+    tags:
+      - v* # Matches tags like v1.0.0, v2.3.1
+      - release-* # Matches tags like release-2024-01
+
+    inputs:
+      environment:
+        description: "Choose environment"
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - qa
 
 jobs:
+  set-vars:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      branchName: ${{ steps.set-branch.outputs.branchName }}
+      envName: ${{ steps.set-env.outputs.envName }}
+      tagName: ${{ steps.set-tag.outputs.tagName }}
+
+    steps:
+      - id: set-tag
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+              echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+      - id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "main" ]; then
+            echo "envName=qa" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "dev" ]; then
+            echo "envName=dev" >> $GITHUB_OUTPUT
+          else
+            echo "envName=staging" >> $GITHUB_OUTPUT
+          fi
+      - id: set-branch
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_type }}" == "branch" ]; then
+            echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+  print-vars:
+    runs-on: ubuntu-latest
+    needs: set-vars
+    env:
+      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
+      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
+      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
+    steps:
+      - name: Print global env in job one
+        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
+          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
+          echo "TAG running on ${{ env.GLOBAL_TAG }}"
+
   test:
     runs-on: ubuntu-latest
-    # Choose environment dynamically based on the branch
-    environment: |-
-      ${{  github.ref_name == 'main' && 'PROD' || github.ref_name == 'dev' && 'dev' || 'staging' }}
-
-    #environment:
-    #  name: ${{ github.ref == 'refs/heads/main' && 'PROD' || 'development' }}
+    needs: set-vars
+    env:
+      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
+      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
+      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
 
     steps:
       - name: Use environment variables
-        run: |
-          echo "Running on branch: ${GITHUB_REF##*/}"
-          echo "Environment: ${{ job.environment }}"
-          echo "Secret in use: ${{secrets.ACTIVE_SECRET}}"
-          echo "Secret in use: ${{secrets.OTHER_SECRET}}"
+        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
+          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
+          echo "TAG running on ${{ env.GLOBAL_TAG }}"
 
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up JDK 21
@@ -33,18 +97,24 @@ jobs:
           java-version: "21"
           distribution: "temurin"
 
-      - name: Say Hello
-        run: echo "Hello from GitHub Actions 🚀"
-
       - name: Run Tests
         run: mvn test
-        working-directory: pic
+        ##working-directory: pic
 
   build:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, set-vars]
+    env:
+      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
+      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
+      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
 
     steps:
+      - name: Show environment
+        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
+          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
+          echo "TAG running on ${{ env.GLOBAL_TAG }}"
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -59,26 +129,50 @@ jobs:
 
       - name: Build Project
         run: mvn clean package -DskipTests=true
-        working-directory: pic
+        ##working-directory: pic
 
-  create-docker-image:
+  build-push-docker-images-qa:
+    needs: [build, set-vars]
+    if: ${{ needs.set-vars.outputs.envName == 'qa' }}
+    environment: qa
     runs-on: ubuntu-latest
-    needs: build
-
-    environment: |-
-      ${{  github.ref_name == 'main' && 'PROD' || github.ref_name == 'dev' && 'dev' || 'staging' }}
-
     steps:
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Build Project
+        run: mvn clean package -DskipTests=true
+
+      - name: create image and push to docker repo
+        #uses: ./.github/actions/dockerImage
+        uses: QUIDA5V/actions/docker@main
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-app:latest
+          gcp_sa_key: ${{ secrets.JSONKEY }}
+          gcp_project_id: "back-438814"
+          repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
+          docker_registry: "us-central1-docker.pkg.dev"
+          image_name: "newimag"
+          tag: "finaltag"
+
+  build-push-docker-images-dev:
+    needs: [build, set-vars]
+    if: ${{ needs.set-vars.outputs.envName == 'dev' }}
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Project
+        run: mvn clean package -DskipTests=true
+
+      - name: create image and push to docker repo
+        ##uses: ./.github/actions/dockerImage
+        uses: QUIDA5V/actions/docker@main
+        with:
+          gcp_sa_key: ${{ secrets.JSONKEY }}
+          gcp_project_id: "back-438814"
+          repository_url: "us-central1-docker.pkg.dev/back-438814/dummytest"
+          docker_registry: "us-central1-docker.pkg.dev"
+          image_name: "newimag"
+          tag: "finaltag"
