@@ -1,7 +1,9 @@
 name: SetUP Environments
 
 on:
-  push:
+  on-merge:
+    if: github.event.pull_request.merged == true
+    ##push:
     branches:
       - main
       - dev
