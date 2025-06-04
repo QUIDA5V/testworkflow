@@ -1,4 +1,4 @@
-name: First workflow
+name: SetUP Environments
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
     branches:
       - main
+      - dev
       - release/*
     tags:
       - v* # Matches tags like v1.0.0, v2.3.1
@@ -21,7 +22,7 @@ on:
         type: choice
         options:
           - dev
-          - prod
+          - qa
 
 jobs:
   set-vars:
@@ -41,9 +42,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
-            echo "branchName=${{ inputs.environment == 'prod' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
+            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_name }}" == "main" ]; then
-            echo "envName=prod" >> $GITHUB_OUTPUT
+            echo "envName=qa" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_name }}" == "dev" ]; then
             echo "envName=dev" >> $GITHUB_OUTPUT
           else
@@ -52,7 +53,7 @@ jobs:
       - id: set-branch
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branchName=${{ inputs.environment == 'prod' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
+            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.ref_type }}" == "branch" ]; then
             echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
@@ -127,10 +128,10 @@ jobs:
         run: mvn clean package -DskipTests=true
         ##working-directory: pic
 
-  build-push-docker-images-prod:
+  build-push-docker-images-qa:
     needs: [build, set-vars]
-    if: ${{ needs.set-vars.outputs.envName == 'prod' }}
-    environment: prod
+    if: ${{ needs.set-vars.outputs.envName == 'qa' }}
+    environment: qa
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
