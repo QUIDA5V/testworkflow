@@ -4,7 +4,7 @@
 
 ## 🚀 Features
 
--Environment , branch and tag are going to be set up according to sthe following scenarios : 
+-Environment , branch and tag are going to be set up according to sthe following scenarios: 
 
 Scenario: Calculating the environment and branch automatically
              When the code into the <branch> is merged
