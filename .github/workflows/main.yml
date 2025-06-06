@@ -157,8 +157,8 @@ jobs:
 
       - name: Set up Git credentials
         run: |
-          git config --global user.email "daniel.quinonez@clara.team"
-          git config --global user.name "daniquinonez"
+          git config --global user.email "dquinonezlib@gmail.com"
+          git config --global user.name "QUIDA5V"
 
       - name: Commit and push changes todo
         run: |
