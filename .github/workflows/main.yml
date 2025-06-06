@@ -130,7 +130,7 @@ jobs:
         ##working-directory: pic
 
       - name: Download artifacts (state files) todo
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: environment-setup-artifact
           path: ./state-files
