@@ -25,6 +25,10 @@ on:
           - dev
           - qa
 
+permissions:
+  contents: write
+  statuses: write
+
 jobs:
   set-vars:
     runs-on: ubuntu-latest
