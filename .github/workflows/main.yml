@@ -155,6 +155,11 @@ jobs:
         run: |
           find ./state-files-repo -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test\"/" {} \;
 
+      - name: Set Git identity
+        run: |
+          git config user.name "QUIDA5V"
+          git config user.email "dquinonezlib@gmail.com"
+
       - name: Commit and push changes todo
         run: |
           cd ./state-files-repo
