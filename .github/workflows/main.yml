@@ -99,11 +99,6 @@ jobs:
         run: mvn test
         ##working-directory: pic
 
-      - name: Checkout repo todo
-        uses: actions/checkout@v4
-        with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build artifact todo
         run: |
           mkdir -p state-files
