@@ -169,7 +169,7 @@ jobs:
       - name: Commit and push changes todo
         run: |
           cd ./state-files-repo
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git remote set-url origin https://github.com/QUIDA5V/state-files-repo.git
           git add .
           git commit -m "Update image tag to test"
           git push origin HEAD
