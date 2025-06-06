@@ -157,10 +157,18 @@ jobs:
         run: |
           find ./state-files-repo -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test\"/" {} \;
 
-      - name: Set up Git credentials
+      - name: Set up Git credentials todo
         run: |
           git config --global user.email "dquinonezlib@gmail.com"
           git config --global user.name "QUIDA5V"
+
+      - name: Commit and push changes todo
+        run: |
+          cd ./state-files-repo
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git add .
+          git commit -m "Update image tag to test"
+          git push origin HEAD
 
       - name: Commit and push changes todo
         run: |
