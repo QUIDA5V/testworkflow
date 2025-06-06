@@ -155,10 +155,10 @@ jobs:
         run: |
           find ./state-files-repo -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test\"/" {} \;
 
-      - name: Set Git identity
+      - name: Set up Git credentials
         run: |
-          git config user.name "QUIDA5V"
-          git config user.email "dquinonezlib@gmail.com"
+          git config --global user.email "daniel.quinonez@clara.team"
+          git config --global user.name "daniquinonez"
 
       - name: Commit and push changes todo
         run: |
