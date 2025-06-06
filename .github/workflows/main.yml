@@ -105,7 +105,7 @@ jobs:
           echo "{\"imageTag\": \"test\"}" > state-files/data.json
 
       - name: Upload artifact todo
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: environment-setup-artifact
           path: state-files/data.json
