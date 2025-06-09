@@ -159,7 +159,7 @@ jobs:
 
       - name: Update image tag in state files todo
         run: |
-          find ./state-files-repo -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test\"/" {} \;
+          find ./state-files-repo/qa -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test5\"/" {} \;
 
       - name: Set up Git credentials todo
         run: |
