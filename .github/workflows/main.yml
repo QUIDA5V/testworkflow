@@ -161,6 +161,11 @@ jobs:
         run: |
           find ./state-files-repo/qa -type f -name "data.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test10\"/" {} \;
 
+      - name: Set up Git credentials todo
+        run: |
+          git config user.email "dquinonezlib@gmail.com"
+          git config user.name "QUIDA5V"
+
       - name: Commit and push changes todo
         run: |
           cd ./state-files-repo
