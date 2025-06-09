@@ -7,6 +7,9 @@ inputs:
   environment:
     description: "environment"
     required: true
+  gh_pat:
+    description: "gh_pat"
+    required: true
 
 runs:
   using: "composite"
@@ -38,7 +41,7 @@ runs:
       shell: bash
       run: |
         cd ./state-files-repo
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/QUIDA5V/state-files-repo
+        git remote set-url origin https://x-access-token:${{ inputs.gh_pat }}@github.com/QUIDA5V/state-files-repo
         git add .
         git commit -m "Update image tag to test"
         git push origin HEAD

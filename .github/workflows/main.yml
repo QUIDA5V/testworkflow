@@ -151,3 +151,4 @@ jobs:
         with:
           image_tag_name: "testing"
           environment: "back-438814"
+          gh_pat: ${{ secrets.GH_PAT }}
