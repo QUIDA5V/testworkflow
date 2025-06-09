@@ -149,6 +149,6 @@ jobs:
       - name: create image and push to docker repo
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: "testing"
-          environment: "back-438814"
+          image_tag_name: "testing0"
+          environment: "qa"
           gh_pat: ${{ secrets.GH_PAT }}
