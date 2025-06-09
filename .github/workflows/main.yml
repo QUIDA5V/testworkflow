@@ -155,11 +155,11 @@ jobs:
       - name: Clone state files repository todo
         run: |
           git clone https://github.com/QUIDA5V/state-files-repo.git
-          mv ./state-files/* ./state-files-repo/QA
+          mv ./state-files/* ./state-files-repo
 
       - name: Update image tag in state files todo
         run: |
-          find ./state-files-repo/QA -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test2\"/" {} \;
+          find ./state-files-repo -type f -name "*.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"test2\"/" {} \;
 
       - name: Set up Git credentials todo
         run: |
