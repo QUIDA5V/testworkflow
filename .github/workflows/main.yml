@@ -174,7 +174,7 @@ jobs:
           git commit -m "Update image tag to test"
           git push origin HEAD
 
-      - name: Commit and push change todo
+      - name: Commit and push changes todo
         run: |
           cd ./state-files-repo
           git add .
