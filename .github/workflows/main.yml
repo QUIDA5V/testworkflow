@@ -159,6 +159,6 @@ jobs:
         uses: ./.github/actions/state-file
         with:
           image_tag_name: "mytag01"
-          image_name: "myimages0"
+          image_name: "myimages01"
           environment: "qa"
           gh_pat: ${{ secrets.GH_PAT }}
