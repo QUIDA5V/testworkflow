@@ -146,7 +146,16 @@ jobs:
         run: mvn clean package -DskipTests=true
         #working-directory: pic
 
-      - name: create image and push to docker repo
+  state-files:
+    needs: [build, set-vars]
+    if: ${{ needs.set-vars.outputs.envName == 'qa' }}
+    environment: qa
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: state-files
         uses: ./.github/actions/state-file
         with:
           image_tag_name: "testing0"
