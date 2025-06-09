@@ -32,7 +32,7 @@ runs:
     - name: Update or create image tag in state files
       shell: bash
       run: |
-        FILE="./state-files-repo/${{ inputs.environment }}/${{ inputs.image_name }}"
+        FILE="./state-files-repo/${{ inputs.environment }}/${{ inputs.image_name }}.json"
 
         # Si el archivo no existe, lo crea con estructura JSON básica
         if [ ! -f "$FILE" ]; then
