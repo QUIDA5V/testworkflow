@@ -38,7 +38,7 @@ runs:
         if [ ! -f "$FILE" ]; then
            echo "Archivo no existe. Creando $FILE..."
            mkdir -p "$(dirname "$FILE")"
-           echo '[{ "imageTag": "${{ inputs.image_tag_name }}" }]' > "$FILE"
+           echo '{ "imageTag": "${{ inputs.image_tag_name }}" }' > "$FILE"
         else
            echo "Archivo existe. Actualizando imageTag..."
         # Usa jq para modificar en caso de que sea una lista de objetos con campo imageTag
