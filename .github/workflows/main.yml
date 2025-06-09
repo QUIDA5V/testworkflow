@@ -163,8 +163,8 @@ jobs:
 
       - name: Set up Git credentials todo
         run: |
-          git config user.email "dquinonezlib@gmail.com"
-          git config user.name "QUIDA5V"
+          git config --global user.email "dquinonezlib@gmail.com"
+          git config --global user.name "QUIDA5V"
 
       - name: Commit and push changes todo
         run: |
