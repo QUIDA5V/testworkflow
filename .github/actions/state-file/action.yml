@@ -4,6 +4,9 @@ inputs:
   image_tag_name:
     description: "image_tag_name"
     required: true
+  image_name:
+    description: "image_name"
+    required: true
   environment:
     description: "environment"
     required: true
@@ -29,7 +32,7 @@ runs:
     - name: Update image tag in state files todo
       shell: bash
       run: |
-        find ./state-files-repo/${{ inputs.environment }} -type f -name "data.json" -exec sed -i "s/\"imageTag\": \".*\"/\"imageTag\": \"${{ inputs.image_tag_name }}\"/" {} \;
+        find ./state-files-repo/${{ inputs.environment }} -type f -name "${{ inputs.image_name }}" -exec sed -i "s/\"imageTag\": \${{ inputs.image_tag_name }}\"/" {} \;
 
     - name: Set up Git credentials todo
       shell: bash
