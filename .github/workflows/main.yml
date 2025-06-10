@@ -158,7 +158,7 @@ jobs:
       - name: state-files
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: mytag05
+          image_tag_name: mytag099
           image_name: "myimages01"
           environment: "qa"
           src_file: "cde/myapp/qa/kustomization.yaml"
