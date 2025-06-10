@@ -158,7 +158,7 @@ jobs:
       - name: state-files
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: mytag01
+          image_tag_name: mytag03
           image_name: "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release"
           environment: "qa"
           bitbucket_username: "lioncito"
