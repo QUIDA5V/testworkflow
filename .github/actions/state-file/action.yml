@@ -58,5 +58,5 @@ runs:
         git config user.name ${{ inputs.bitbucket_username }}
         git config user.email "dquinonezlib@gmail.com"
         git add .
-        git commit -m "chore: update image tag to "
-        git push origin
+        git commit -m "chore: update image tag "
+        git push https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git HEAD:main
