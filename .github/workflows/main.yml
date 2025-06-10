@@ -161,5 +161,5 @@ jobs:
           image_tag_name: "mytag02"
           image_name: "myimages01"
           environment: "qa"
-          bitbucket_username: "daniel%20quinonez"
+          bitbucket_username: "lioncito"
           bitbucket_app_pwd: ${{ secrets.BITBUCKET_APP_PWD }}
