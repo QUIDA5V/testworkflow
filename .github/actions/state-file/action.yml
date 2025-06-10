@@ -53,7 +53,7 @@ runs:
       shell: bash
       run: |
         cd bitbucket-repo
-        git config user.name "daniel quinonez"
+        git config user.name "daniel%20quinonez"
         git config user.email "dquinonezlib@gmail.com"
         git add .
         git commit -m "chore: update image tag to "
