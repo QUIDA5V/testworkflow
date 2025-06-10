@@ -161,4 +161,5 @@ jobs:
           image_tag_name: "mytag02"
           image_name: "myimages01"
           environment: "qa"
-          gh_pat: ${{ secrets.GH_PAT }}
+          bitbucket_username: "daniel quinonez"
+          bitbucket_app_pwd: ${{ secrets.BITBUCKET_APP_PWD }}
