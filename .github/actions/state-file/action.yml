@@ -42,7 +42,7 @@ runs:
       run: |
         FILE="./bitbucket-repo/cde/myapp/qa/kustomization.yaml"
         TAG="${{ inputs.image_tag_name }}"
-        yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
+        yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = ${{ inputs.image_tag_name }}' -i $FILE
 
     #- name: Actualizar newTag en YAML
     #  shell: bash
