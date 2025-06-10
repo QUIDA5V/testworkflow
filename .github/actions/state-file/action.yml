@@ -44,7 +44,7 @@ runs:
       shell: bash
       run: |
         FILE="./bitbucket-repo/${{ inputs.src_file }}"
-        yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
+        yq e '(.images[] | select(.name == ${{ inputs.image_name }})).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
 
     #- name: Actualizar newTag en YAML
     #  shell: bash
