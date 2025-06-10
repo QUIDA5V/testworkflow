@@ -10,52 +10,38 @@ inputs:
   environment:
     description: "environment"
     required: true
-  gh_pat:
-    description: "gh_pat"
+  bitbucket_username:
+    description: "bitbucket username"
+    required: true
+  bitbucket_app_pwd:
+    description: "bitbucket app password"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Download artifacts (state files) todo
-      uses: actions/download-artifact@v4
-      with:
-        name: environment-setup-artifact
-        path: ./state-files
-
-    - name: Clone state files repository todo
+    - name: Clonar el repositorio de Bitbucket
       shell: bash
       run: |
-        git clone https://github.com/QUIDA5V/state-files-repo.git
-        mv ./state-files/* ./state-files-repo
+        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git bitbucket-repo
+      env:
+        GIT_SSL_NO_VERIFY: true
 
-    - name: Update or create image tag in state files
+    - name: Instalar yq
+      shell: bash
+      run: sudo snap install yq
+
+    - name: Actualizar newTag en YAML
       shell: bash
       run: |
-        FILE="./state-files-repo/${{ inputs.environment }}/${{ inputs.image_name }}.json"
+        yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = "${{ inputs.image_tag_name }}"' -i kustomization.yaml
 
-        # Si el archivo no existe, lo crea con estructura JSON básica
-        if [ ! -f "$FILE" ]; then
-           echo "Archivo no existe. Creando $FILE..."
-           mkdir -p "$(dirname "$FILE")"
-           echo '[{ "imageTag": "${{ inputs.image_tag_name }}" }]' > "$FILE"
-        else
-           echo "Archivo existe. Actualizando imageTag..."
-        # Usa jq para modificar en caso de que sea una lista de objetos con campo imageTag
-        jq --arg tag "${{ inputs.image_tag_name }}" 'map(.imageTag = $tag)' "$FILE" > tmp.json && mv tmp.json "$FILE"
-        fi
-
-    - name: Set up Git credentials todo
+    - name: Commit y push a Bitbucket
       shell: bash
       run: |
-        git config --global user.email "dquinonezlib@gmail.com"
-        git config --global user.name "QUIDA5V"
-
-    - name: Commit and push changes todo
-      shell: bash
-      run: |
-        cd ./state-files-repo
-        git remote set-url origin https://x-access-token:${{ inputs.gh_pat }}@github.com/QUIDA5V/state-files-repo
+        cd bitbucket-repo
+        git config user.name "daniel quinonez"
+        git config user.email "dquinonezlib@gmail.com"
         git add .
-        git commit -m "Update image tag to test"
-        git push origin HEAD
+        git commit -m "chore: update image tag to "
+        git push origin main
