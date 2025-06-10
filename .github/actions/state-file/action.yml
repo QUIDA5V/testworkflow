@@ -24,6 +24,7 @@ runs:
       shell: bash
       run: |
         git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git
+      env:
         GIT_SSL_NO_VERIFY: true
 
     - name: Instalar yq
@@ -50,6 +51,7 @@ runs:
     - name: Commit y push a Bitbucket
       shell: bash
       run: |
+
         git config user.name ${{ inputs.bitbucket_username }}
         git config user.email "dquinonezlib@gmail.com"
         git add .
