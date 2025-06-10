@@ -158,9 +158,8 @@ jobs:
       - name: state-files
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: "mytag102"
+          image_tag_name: "mytag103"
           image_name: "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release"
-          environment: "qa"
           src_file: "cde/myapp/qa/kustomization.yaml"
           bitbucket_username: "lioncito"
           bitbucket_app_pwd: ${{ secrets.BITBUCKET_APP_PWD }}

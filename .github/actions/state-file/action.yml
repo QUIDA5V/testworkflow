@@ -2,16 +2,13 @@ name: "Update image to state-file"
 description: "Update image to state-file"
 inputs:
   image_tag_name:
-    description: "image_tag_name"
+    description: "tag name of the image"
     required: true
   image_name:
-    description: "image_name"
-    required: true
-  environment:
-    description: "environment"
+    description: "name of the image"
     required: true
   src_file:
-    description: "src_file"
+    description: "source of the kustomization.yaml file"
     required: true
   bitbucket_username:
     description: "bitbucket username"
@@ -59,4 +56,4 @@ runs:
         git config user.email "dquinonezlib@gmail.com"
         git add .
         git commit -m "chore: update image tag "
-        git push https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git HEAD:main
+        git push origin
