@@ -7,6 +7,9 @@ inputs:
   image_name:
     description: "name of the image"
     required: true
+  repo_name:
+    description: "name of the state file repo"
+    required: true
   src_file:
     description: "source of the kustomization.yaml file"
     required: true
@@ -23,7 +26,7 @@ runs:
     - name: Clonar el repositorio de Bitbucket
       shell: bash
       run: |
-        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git bitbucket-repo
+        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/${{ inputs.repo_name }}.git bitbucket-repo
       env:
         GIT_SSL_NO_VERIFY: true
 
