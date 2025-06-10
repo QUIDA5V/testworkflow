@@ -34,7 +34,7 @@ runs:
     - name: Update or create image tag in state files
       shell: bash
       run: |
-        FILE="./cde/myapp/qa/kustomization.yaml"
+        FILE="./state_file_repo/cde/myapp/qa/kustomization.yaml"
         TAG="${{ inputs.image_tag_name }}"
         yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = strenv(TAG)' -i "$FILE"
 
