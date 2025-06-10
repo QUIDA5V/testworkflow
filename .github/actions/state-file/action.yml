@@ -10,6 +10,9 @@ inputs:
   environment:
     description: "environment"
     required: true
+  src_file:
+    description: "src_file"
+    required: true
   bitbucket_username:
     description: "bitbucket username"
     required: true
@@ -23,7 +26,7 @@ runs:
     - name: Clonar el repositorio de Bitbucket
       shell: bash
       run: |
-        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git
+        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git bitbucket-repo
       env:
         GIT_SSL_NO_VERIFY: true
 
@@ -40,7 +43,7 @@ runs:
     - name: Update or create image tag in state files
       shell: bash
       run: |
-        FILE="./cde/myapp/qa/kustomization.yaml"
+        FILE="./bitbucket-repo/${{ inputs.src_file }}"
         yq e '(.images[] | select(.name == "${{ inputs.image_name }}")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
 
     #- name: Actualizar newTag en YAML
@@ -51,9 +54,9 @@ runs:
     - name: Commit y push a Bitbucket
       shell: bash
       run: |
-
+        cd bitbucket-repo
         git config user.name ${{ inputs.bitbucket_username }}
         git config user.email "dquinonezlib@gmail.com"
         git add .
         git commit -m "chore: update image tag to "
-        git push origin
+        git push https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/state_file_repo.git HEAD:main
