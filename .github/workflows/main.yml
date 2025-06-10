@@ -158,7 +158,7 @@ jobs:
       - name: state-files
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: "mytag02"
+          image_tag_name: mytag02
           image_name: "myimages01"
           environment: "qa"
           bitbucket_username: "lioncito"
