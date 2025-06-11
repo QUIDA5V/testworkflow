@@ -1,5 +1,5 @@
-name: "Update image to state-file"
-description: "Update image to state-file"
+name: "Update state-file tag name"
+description: "Update state-file tag name"
 inputs:
   image_tag_name:
     description: "tag name of the image"
@@ -10,8 +10,11 @@ inputs:
   repo_name:
     description: "name of the state file repo"
     required: true
+  organization_workspace:
+    description: "name of workspace organization"
+    required: true
   src_file:
-    description: "source of the kustomization.yaml file"
+    description: "address of the state file"
     required: true
   bitbucket_username:
     description: "bitbucket username"
@@ -26,10 +29,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Clonar el repositorio de Bitbucket
+    - name: Clone Bitbucket repository
       shell: bash
       run: |
-        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/dqworkspace/${{ inputs.repo_name }}.git bitbucket-repo
+        git clone https://${{ inputs.bitbucket_username }}:${{ inputs.bitbucket_app_pwd }}@bitbucket.org/${{ inputs.organization_workspace }}/${{ inputs.repo_name }}.git bitbucket-repo
       env:
         GIT_SSL_NO_VERIFY: true
 
@@ -47,19 +50,19 @@ runs:
       shell: bash
       run: |
         FILE="./bitbucket-repo/${{ inputs.src_file }}"
-        yq e '(.images[] | select(.name == "${{ inputs.image_name }}")).newTag = ${${{ inputs.image_tag_name }}//\"/}' -i $FILE
+        yq e '(.images[] | select(.name == "${{ inputs.image_name }}")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
 
     #- name: Actualizar newTag en YAML
     #  shell: bash
     #  run: |
     #    yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
 
-    - name: Commit y push a Bitbucket
+    - name: Commit and push to Bitbucket
       shell: bash
       run: |
         cd bitbucket-repo
         git config user.name ${{ inputs.bitbucket_username }}
         git config user.email ${{ inputs.bitbucket_user_email }}
         git add .
-        git commit -m "chore: update image tag "
+        git commit -m "chore: update image tag of ${{ inputs.image_name }}"
         git push origin
