@@ -158,7 +158,7 @@ jobs:
       - name: state-files
         uses: ./.github/actions/state-file
         with:
-          image_tag_name: "mytag109"
+          image_tag_name: "mytag110"
           image_name: "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release"
           repo_name: "state_file_repo"
           organization_workspace: "dqworkspace"
