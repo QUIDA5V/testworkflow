@@ -64,5 +64,5 @@ runs:
         git config user.name ${{ inputs.bitbucket_username }}
         git config user.email ${{ inputs.bitbucket_user_email }}
         git add .
-        git commit -m "chore: update image tag of ${{ inputs.image_name }}"
+        git commit -m ":pencil2: update image tag of ${{ inputs.image_name }}"
         git push origin
