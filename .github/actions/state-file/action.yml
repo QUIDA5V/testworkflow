@@ -40,7 +40,7 @@ runs:
       shell: bash
       run: sudo snap install yq
 
-    #- name: List all files in repo
+    ##- name: List all files in repo
     #  shell: bash
     #  run: |
     #    echo "📦 Archivos en el repositorio:"
