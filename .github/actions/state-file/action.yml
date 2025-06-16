@@ -40,22 +40,11 @@ runs:
       shell: bash
       run: sudo snap install yq
 
-    ##- name: List all files in repo
-    #  shell: bash
-    #  run: |
-    #    echo "📦 Archivos en el repositorio:"
-    #    find . -type f
-
     - name: Update image tag in state files
       shell: bash
       run: |
         FILE="./bitbucket-repo/${{ inputs.src_file }}"
         yq e '(.images[] | select(.name == "${{ inputs.image_name }}")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
-
-    #- name: Actualizar newTag en YAML
-    #  shell: bash
-    #  run: |
-    #    yq e '(.images[] | select(.name == "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release")).newTag = "${{ inputs.image_tag_name }}"' -i $FILE
 
     - name: Commit and push to Bitbucket
       shell: bash
