@@ -19,6 +19,9 @@ jobs:
         env:
           STATE_FILES_TOKEN: ${{ secrets.STATE_FILES_TOKEN }}
 
+      - name: List actions folder
+        run: ls -R .github/actions/state-file
+
       - name: Run custom update action
         uses: ./.github/actions/state-file
         with:
