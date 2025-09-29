@@ -12,6 +12,13 @@ jobs:
       - name: Checkout current repo
         uses: actions/checkout@v4
 
+      - name: Debug token
+        run: |
+          echo "Token length: ${#STATE_FILES_TOKEN}"
+          echo "First 4 chars: ${STATE_FILES_TOKEN:0:4}"
+        env:
+          STATE_FILES_TOKEN: ${{ secrets.STATE_FILES_TOKEN }}
+
       - name: Run custom update action
         uses: ./.github/actions/state-file
         with:

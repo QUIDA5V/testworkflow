@@ -31,6 +31,7 @@ runs:
         repository: ${{ inputs.repo }}
         ref: ${{ inputs.branch }}
         token: ${{ inputs.github_token }}
+        path: state-files-repo
 
     - name: Install Kustomize
       shell: bash
