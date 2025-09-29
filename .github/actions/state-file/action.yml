@@ -20,7 +20,7 @@ inputs:
     required: true
   github_token:
     description: "GitHub token with write access to target repo"
-    required: true
+    required: false
 
 runs:
   using: "composite"
@@ -30,7 +30,7 @@ runs:
       with:
         repository: ${{ inputs.repo }}
         ref: ${{ inputs.branch }}
-        token: ${{ inputs.github_token }}
+        ##token: ${{ inputs.github_token }}
 
     - name: Install Kustomize
       shell: bash # 👈 obligatorio
