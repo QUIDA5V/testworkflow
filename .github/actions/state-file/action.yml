@@ -2,8 +2,11 @@ name: "Update YAML with Kustomize"
 description: "Custom action to patch a YAML file in another repo using kustomize"
 
 inputs:
-  repo:
-    description: "Target repository (owner/repo)"
+  target_repo:
+    description: "Target repository"
+    required: true
+  repo_name:
+    description: "Name of the repo"
     required: true
   branch:
     description: "Target branch"
@@ -31,7 +34,8 @@ runs:
         repository: ${{ inputs.repo }}
         ref: ${{ inputs.branch }}
         token: ${{ inputs.github_token }}
-        path: state-files-repo
+        path: ${{ inputs.repo_name }}
+        ##state-files-repo
 
     - name: Debug repo contents
       shell: bash
@@ -63,7 +67,7 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add "${{ inputs.file_path }}"
-        git commit -m "chore: update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes to commit"
+        git commit -m "Update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes to commit"
         git push origin ${{ inputs.branch }}
 
     - name: After

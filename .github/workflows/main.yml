@@ -25,9 +25,10 @@ jobs:
       - name: Run custom update action
         uses: ./.github/actions/state-file
         with:
-          repo: QUIDA5V/state-files-repo
+          target_repo: QUIDA5V/state-files-repo
+          repo_name: state-files-repo
           branch: main
           file_path: dev/non-cde/kustomization.yaml # el archivo a actualizar
           image_name: myimage
-          image_tag: 1.26.5
+          image_tag: 1.26.6
           github_token: ${{ secrets.STATE_FILES_TOKEN }}
