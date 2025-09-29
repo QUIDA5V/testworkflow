@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run custom update action
-        uses: ./github/actions/state-file
+        uses: ./.github/actions/state-file
         with:
           repo: QUIDA5V/state-files-repo
           branch: main
