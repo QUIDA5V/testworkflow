@@ -1,168 +1,24 @@
-name: SetUP Environments
+name: Update YAML in another repo
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
-      - main
-      - dev
-  workflow_dispatch:
-    branches:
-      - main
-      - dev
-      - release/*
-    tags:
-      - v* # Matches tags like v1.0.0, v2.3.1
-      - release-* # Matches tags like release-2024-01
-
-    inputs:
-      environment:
-        description: "Choose environment"
-        required: true
-        default: dev
-        type: choice
-        options:
-          - dev
-          - qa
-
-permissions:
-  contents: write
-  statuses: write
+      - main # aquí pones las ramas donde quieres que corra
+      - develop
 
 jobs:
-  set-vars:
-    runs-on: ubuntu-latest
-    outputs:
-      branchName: ${{ steps.set-branch.outputs.branchName }}
-      envName: ${{ steps.set-env.outputs.envName }}
-      tagName: ${{ steps.set-tag.outputs.tagName }}
-
-    steps:
-      - id: set-tag
-        run: |
-          if [ "${{ github.ref_type }}" == "tag" ]; then
-              echo "tagName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-      - id: set-env
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "envName=${{ inputs.environment }}" >> $GITHUB_OUTPUT
-            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref_name }}" == "main" ]; then
-            echo "envName=qa" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref_name }}" == "dev" ]; then
-            echo "envName=dev" >> $GITHUB_OUTPUT
-          else
-            echo "envName=staging" >> $GITHUB_OUTPUT
-          fi
-      - id: set-branch
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branchName=${{ inputs.environment == 'qa' && 'main' || inputs.environment == 'dev' && 'dev' }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref_type }}" == "branch" ]; then
-            echo "branchName=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-
-  print-vars:
-    runs-on: ubuntu-latest
-    needs: set-vars
-    env:
-      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
-      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
-      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
-    steps:
-      - name: Print global env in job one
-        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
-          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
-          echo "TAG running on ${{ env.GLOBAL_TAG }}"
-
-  test:
-    runs-on: ubuntu-latest
-    needs: set-vars
-    env:
-      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
-      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
-      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
-
-    steps:
-      - name: Use environment variables
-        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
-          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
-          echo "TAG running on ${{ env.GLOBAL_TAG }}"
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: Run Tests
-        run: mvn test
-        #working-directory: pic
-
-      - name: Build artifact todo
-        run: |
-          mkdir -p state-files
-          echo "{\"imageTag\": \"test\"}" > state-files/data.json
-
-      - name: Upload artifact todo
-        uses: actions/upload-artifact@v4
-        with:
-          name: environment-setup-artifact
-          path: state-files/data.json
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [test, set-vars]
-    env:
-      GLOBAL_ENV: ${{ needs.set-vars.outputs.envName }}
-      GLOBAL_BRANCH: ${{ needs.set-vars.outputs.branchName }}
-      GLOBAL_TAG: ${{ needs.set-vars.outputs.tagName }}
-
-    steps:
-      - name: Show environment
-        run: echo "Job running on ${{ env.GLOBAL_ENV }}"
-          echo "BRANCH running on ${{ env.GLOBAL_BRANCH }}"
-          echo "TAG running on ${{ env.GLOBAL_TAG }}"
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: Say Hello
-        run: echo "Hello from GitHub Actions 🚀"
-
-      - name: Build Project
-        run: mvn clean package -DskipTests=true
-        #working-directory: pic
-
-  state-files:
-    needs: [build, set-vars]
-    if: ${{ needs.set-vars.outputs.envName == 'qa' }}
-    environment: qa
+  update-yaml:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout current repo
+        uses: actions/checkout@v4
 
-      - name: state-files
-        uses: ./.github/actions/state-file
+      - name: Run custom update action
+        uses: ./github/actions/state-file
         with:
-          image_tag_name: "myDemoTag"
-          image_name: "gcr.io/transfers-non-cde-3df5/l2p/alias-directory-gw/release"
-          repo_name: "state_file_repo"
-          organization_workspace: "dqworkspace"
-          src_file: "cde/myapp/qa/kustomization.yaml"
-          bitbucket_username: "lioncito"
-          bitbucket_user_email: "dquinonezlib@gmail.com"
-          bitbucket_app_pwd: ${{ secrets.BITBUCKET_APP_PWD }}
+          repo: QUIDA5V/state-files-repo
+          branch: main
+          file_path: dev/non-cde/test.yaml # el archivo a actualizar
+          image_name: myimage
+          image_tag: latest
+          github_token: ${{ secrets.PAT_TOKEN }}
