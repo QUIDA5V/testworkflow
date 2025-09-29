@@ -3,7 +3,7 @@ name: Update YAML in another repo
 on:
   push:
     branches:
-      - main # aquí pones las ramas donde quieres que corra
+      - main # aquí pones las ramas donde quieres que corras
       - develop
 jobs:
   update-yaml:
