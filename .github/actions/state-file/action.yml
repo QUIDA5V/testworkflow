@@ -31,7 +31,7 @@ runs:
     - name: Checkout target repo
       uses: actions/checkout@v4
       with:
-        repository: ${{ inputs.repo }}
+        repository: ${{ inputs.target_repo }}
         ref: ${{ inputs.branch }}
         token: ${{ inputs.github_token }}
         path: ${{ inputs.repo_name }}
