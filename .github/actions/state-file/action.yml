@@ -1,5 +1,6 @@
 name: "Update YAML with Kustomize"
 description: "Custom action to patch a YAML file in another repo using kustomize"
+
 inputs:
   repo:
     description: "Target repository (owner/repo)"
@@ -12,14 +13,15 @@ inputs:
     description: "Directory containing kustomization.yaml"
     required: true
   image_name:
-    description: ""
+    description: "Container image name"
     required: true
   image_tag:
-    description: ""
+    description: "Container image tag"
     required: true
   github_token:
     description: "GitHub token with write access to target repo"
     required: true
+
 runs:
   using: "composite"
   steps:
@@ -31,6 +33,7 @@ runs:
         token: ${{ inputs.github_token }}
 
     - name: Install Kustomize
+      shell: bash # 👈 obligatorio
       run: |
         curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
         sudo mv kustomize /usr/local/bin/
@@ -50,5 +53,5 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add "${{ inputs.file_path }}"
-        git commit -m "test"
+        git commit -m "chore: update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes"
         git push origin ${{ inputs.branch }}
