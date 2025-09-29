@@ -33,6 +33,10 @@ runs:
         token: ${{ inputs.github_token }}
         path: state-files-repo
 
+    - name: Debug repo contents
+      run: |
+        ls -R state-files-repo | head -50
+
     - name: Install Kustomize
       shell: bash
       run: |
