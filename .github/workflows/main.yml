@@ -20,4 +20,4 @@ jobs:
           file_path: dev/non-cde/test.yaml # el archivo a actualizar
           image_name: myimage
           image_tag: latest
-          github_token: ${{ secrets.PAT_TOKEN }}
+          ##github_token: ${{ secrets.PAT_TOKEN }}
