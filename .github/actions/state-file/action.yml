@@ -10,7 +10,7 @@ inputs:
     required: false
     default: "main"
   file_path:
-    description: "Directory containing kustomization.yaml"
+    description: "Path to kustomization.yaml in the target repo"
     required: true
   image_name:
     description: "Container image name"
@@ -33,7 +33,7 @@ runs:
         ##token: ${{ inputs.github_token }}
 
     - name: Install Kustomize
-      shell: bash # 👈 obligatorio
+      shell: bash
       run: |
         curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
         sudo mv kustomize /usr/local/bin/
