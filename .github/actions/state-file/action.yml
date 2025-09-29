@@ -34,6 +34,7 @@ runs:
         path: state-files-repo
 
     - name: Debug repo contents
+      shell: bash
       run: |
         ls -R state-files-repo | head -50
 
