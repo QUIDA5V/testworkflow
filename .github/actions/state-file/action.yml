@@ -58,6 +58,7 @@ runs:
     - name: Commit & Push
       shell: bash
       run: |
+        cd state-files-repo
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add "${{ inputs.file_path }}"
