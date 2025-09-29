@@ -19,5 +19,5 @@ jobs:
           branch: main
           file_path: dev/non-cde/test.yaml # el archivo a actualizar
           image_name: myimage
-          image_tag: 1.25.0
+          image_tag: 1.26.0
           ##github_token: ${{ secrets.PAT_TOKEN }}
