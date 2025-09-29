@@ -10,7 +10,7 @@ inputs:
     required: false
     default: "main"
   file_path:
-    description: "Path to kustomization.yaml"
+    description: "Path to kustomization.yaml (relative to repo root)"
     required: true
   image_name:
     description: "Container image name"
@@ -36,6 +36,7 @@ runs:
     - name: Debug repo contents
       shell: bash
       run: |
+        echo "📂 Repo structure:"
         ls -R state-files-repo | head -50
 
     - name: Install Kustomize
@@ -50,7 +51,7 @@ runs:
         echo "➡️ Updating file: ${{ inputs.file_path }}"
         echo "➡️ Setting image: ${{ inputs.image_name }}:${{ inputs.image_tag }}"
 
-        cd "$(dirname "${{ inputs.file_path }}")"
+        cd "state-files-repo/$(dirname "${{ inputs.file_path }}")"
         kustomize edit set image "${{ inputs.image_name }}=${{ inputs.image_name }}:${{ inputs.image_tag }}"
 
         echo "✅ kustomization.yaml updated successfully"
