@@ -20,7 +20,7 @@ inputs:
     required: true
   github_token:
     description: "GitHub token with write access to target repo"
-    required: false
+    required: true
 
 runs:
   using: "composite"
