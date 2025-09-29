@@ -58,3 +58,8 @@ runs:
         git add "${{ inputs.file_path }}"
         git commit -m "chore: update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes to commit"
         git push origin ${{ inputs.branch }}
+
+    - name: After
+      shell: bash
+      run: |
+        echo "✅ DONE"
