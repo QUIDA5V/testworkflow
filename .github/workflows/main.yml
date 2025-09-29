@@ -27,7 +27,7 @@ jobs:
         with:
           repo: QUIDA5V/state-files-repo
           branch: main
-          file_path: /dev/non-cde/kustomization.yaml # el archivo a actualizar
+          file_path: state-files-repo/dev/non-cde/kustomization.yaml # el archivo a actualizar
           image_name: myimage
           image_tag: 1.26.1
           github_token: ${{ secrets.STATE_FILES_TOKEN }}
