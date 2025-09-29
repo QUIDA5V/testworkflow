@@ -10,7 +10,7 @@ inputs:
     required: false
     default: "main"
   file_path:
-    description: "Path to kustomization.yaml in the target repo"
+    description: "Path to kustomization.yaml"
     required: true
   image_name:
     description: "Container image name"
@@ -38,14 +38,16 @@ runs:
         curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
         sudo mv kustomize /usr/local/bin/
 
-    - name: Run update script
+    - name: Update kustomization.yaml
       shell: bash
       run: |
-        chmod +x $GITHUB_ACTION_PATH/entrypoint.sh
-        $GITHUB_ACTION_PATH/entrypoint.sh \
-          "${{ inputs.file_path }}" \
-          "${{ inputs.image_name }}" \
-          "${{ inputs.image_tag }}"
+        echo "➡️ Updating file: ${{ inputs.file_path }}"
+        echo "➡️ Setting image: ${{ inputs.image_name }}:${{ inputs.image_tag }}"
+
+        cd "$(dirname "${{ inputs.file_path }}")"
+        kustomize edit set image "${{ inputs.image_name }}=${{ inputs.image_name }}:${{ inputs.image_tag }}"
+
+        echo "✅ kustomization.yaml updated successfully"
 
     - name: Commit & Push
       shell: bash
@@ -53,5 +55,5 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add "${{ inputs.file_path }}"
-        git commit -m "chore: update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes"
+        git commit -m "chore: update image ${{ inputs.image_name }}:${{ inputs.image_tag }}" || echo "No changes to commit"
         git push origin ${{ inputs.branch }}
