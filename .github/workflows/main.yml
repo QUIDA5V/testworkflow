@@ -24,4 +24,6 @@ jobs:
           scan-targets: .
 
       - name: Ver resultados
-        run: echo "Scan ID: ${{ steps.evaluate.outputs.scan-id }} | URL: ${{ steps.evaluate.outputs.report-url }}"
+        run: |
+          echo "Scan ID: ${{ steps.evaluate.outputs.scan-id }}"
+          echo "URL: ${{ steps.evaluate.outputs.report-url }}"
