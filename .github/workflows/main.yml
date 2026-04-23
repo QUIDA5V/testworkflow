@@ -20,7 +20,7 @@ jobs:
           iq-server-url: https://ae-saas.sonatype.app/platform
           username: ${{ secrets.LIFECYCLE_USERNAME }}
           password: ${{ secrets.LIFECYCLE_PASSWORD }}
-          application-id: vas-cybersource-adapter
+          application-id: 123456
           scan-targets: .
 
       - name: Ver resultados
