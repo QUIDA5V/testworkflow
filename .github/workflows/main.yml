@@ -1,34 +1,27 @@
-name: Update YAML in another repo
+name: Sonatype Lifecycle Scan
 
 on:
   push:
-    branches:
-      - main # aquí pones las ramas donde quieres que corras
-      - develop
+    branches: [main]
+  pull_request:
+
 jobs:
-  update-yaml:
+  sonatype-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout current repo
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Debug token
-        run: |
-          echo "Token length: ${#STATE_FILES_TOKEN}"
-          echo "First 4 chars: ${STATE_FILES_TOKEN:0:4}"
-        env:
-          STATE_FILES_TOKEN: ${{ secrets.STATE_FILES_TOKEN }}
-
-      - name: List actions folder
-        run: ls -R .github/actions/state-file
-
-      - name: Run custom update action
-        uses: ./.github/actions/state-file
+      - name: Ejecutar evaluación Sonatype Lifecycle
+        id: evaluate
+        uses: sonatype/actions/evaluate@v1
         with:
-          target_repo: QUIDA5V/state-files-repo
-          repo_name: state-files-repo
-          branch: main
-          file_path: dev/non-cde/kustomization.yaml # el archivo a actualizar
-          image_name: myimage
-          image_tag: 1.26.7
-          github_token: ${{ secrets.STATE_FILES_TOKEN }}
+          iq-server-url: https://ae-saas.sonatype.app/platform
+          username: ${{ secrets.LIFECYCLE_USERNAME }}
+          password: ${{ secrets.LIFECYCLE_PASSWORD }}
+          application-id: ${{ secrets.LIFECYCLE_ORG_ID }}
+          scan-targets: .   # o el path de tu artefacto
+
+      - name: Ver resultados
+        run: echo "Scan ID: ${{ steps.evaluate.outputs.scan-id }} | URL: ${{ steps.evaluate.outputs.report-url }}"
