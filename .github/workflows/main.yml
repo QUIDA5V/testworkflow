@@ -1,4 +1,5 @@
 name: Sonatype Lifecycle Scan
+
 on:
   push:
     branches: [main]
@@ -20,7 +21,7 @@ jobs:
           username: ${{ secrets.LIFECYCLE_USERNAME }}
           password: ${{ secrets.LIFECYCLE_PASSWORD }}
           application-id: ${{ secrets.LIFECYCLE_ORG_ID }}
-          scan-targets: .   # o el path de tu artefacto
+          scan-targets: .
 
       - name: Ver resultados
         run: echo "Scan ID: ${{ steps.evaluate.outputs.scan-id }} | URL: ${{ steps.evaluate.outputs.report-url }}"
