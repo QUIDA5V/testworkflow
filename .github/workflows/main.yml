@@ -1,5 +1,4 @@
 name: Sonatype Lifecycle Scan
-
 on:
   push:
     branches: [main]
