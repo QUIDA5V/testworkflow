@@ -1,5 +1,4 @@
 name: Sonatype Lifecycle Scan
-
 on:
   push:
     branches: [main]
@@ -8,22 +7,20 @@ on:
 jobs:
   sonatype-scan:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ejecutar evaluación Sonatype Lifecycle
-        id: evaluate
-        uses: sonatype/actions/evaluate@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          iq-server-url: https://ae-saas.sonatype.app/platform
-          username: ${{ secrets.LIFECYCLE_USERNAME }}
-          password: ${{ secrets.LIFECYCLE_PASSWORD }}
-          application-id: 123456
-          scan-targets: .
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Ver resultados
+      - name: Sonatype scan via Maven plugin
         run: |
-          echo "Scan ID: ${{ steps.evaluate.outputs.scan-id }}"
-          echo "URL: ${{ steps.evaluate.outputs.report-url }}"
+          mvn com.sonatype.clm:clm-maven-plugin:evaluate \
+            -Dclm.serverUrl=https://ae-saas.sonatype.app/platform \
+            -Dclm.username=${{ secrets.LIFECYCLE_USERNAME }} \
+            -Dclm.password=${{ secrets.LIFECYCLE_PASSWORD }} \
+            -Dclm.applicationId=123456
