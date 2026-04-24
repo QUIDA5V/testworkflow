@@ -1,4 +1,5 @@
 name: Sonatype Lifecycle Scan
+
 on:
   push:
     branches: [main]
@@ -7,6 +8,7 @@ on:
 jobs:
   sonatype-scan:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,6 +18,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
       - name: Sonatype scan via Maven plugin
         run: |
@@ -23,4 +26,45 @@ jobs:
             -Dclm.serverUrl=https://ae-saas.sonatype.app/platform \
             -Dclm.username=${{ secrets.LIFECYCLE_USERNAME }} \
             -Dclm.password=${{ secrets.LIFECYCLE_PASSWORD }} \
-            -Dclm.applicationId=123456
+            -Dclm.applicationId=123456 \
+            -Dclm.resultFile=target/sonatype-result.json
+
+      - name: Upload scan result
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonatype-report
+          path: |
+            target/sonatype-result.json
+            target/clm-reports/
+
+      - name: Write GitHub summary
+        if: always()
+        run: |
+          REPORT_URL=$(jq -r '.reportHtmlUrl' target/sonatype-result.json)
+          POLICY_ACTION=$(jq -r '.policyAction' target/sonatype-result.json)
+          CRITICAL=$(jq -r '.openPolicyViolations.CRITICAL // 0' target/sonatype-result.json)
+          HIGH=$(jq -r '.openPolicyViolations.HIGH // 0' target/sonatype-result.json)
+          MEDIUM=$(jq -r '.openPolicyViolations.MEDIUM // 0' target/sonatype-result.json)
+
+          echo "## Sonatype Lifecycle Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Policy action | \`$POLICY_ACTION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Critical violations | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| High violations | $HIGH |" >> $GITHUB_STEP_SUMMARY
+          echo "| Medium violations | $MEDIUM |" >> $GITHUB_STEP_SUMMARY
+          echo "| Full report | [Open in Lifecycle]($REPORT_URL) |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check policy violations
+        run: |
+          POLICY_ACTION=$(jq -r '.policyAction' target/sonatype-result.json)
+
+          if [ "$POLICY_ACTION" = "Failure" ]; then
+            echo "::error::Build blocked by Sonatype policy violations. Check the report: $(jq -r '.reportHtmlUrl' target/sonatype-result.json)"
+            exit 1
+          elif [ "$POLICY_ACTION" = "Warning" ]; then
+            echo "::warning::Policy violations found. Check the report: $(jq -r '.reportHtmlUrl' target/sonatype-result.json)"
+          else
+            echo "Scan passed with no violations"
+          fi
