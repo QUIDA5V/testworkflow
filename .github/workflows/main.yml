@@ -29,15 +29,6 @@ jobs:
             -Dclm.applicationId=123456 \
             -Dclm.resultFile=target/sonatype-result.json
 
-      - name: Upload scan result
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: sonatype-report
-          path: |
-            target/sonatype-result.json
-            target/clm-reports/
-
       - name: Write GitHub summary
         if: always()
         run: |
@@ -46,25 +37,44 @@ jobs:
           CRITICAL=$(jq -r '.openPolicyViolations.CRITICAL // 0' target/sonatype-result.json)
           HIGH=$(jq -r '.openPolicyViolations.HIGH // 0' target/sonatype-result.json)
           MEDIUM=$(jq -r '.openPolicyViolations.MEDIUM // 0' target/sonatype-result.json)
+          LOW=$(jq -r '.openPolicyViolations.LOW // 0' target/sonatype-result.json)
 
-          echo "## Sonatype Lifecycle Scan Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "| Policy action | \`$POLICY_ACTION\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Critical violations | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
-          echo "| High violations | $HIGH |" >> $GITHUB_STEP_SUMMARY
-          echo "| Medium violations | $MEDIUM |" >> $GITHUB_STEP_SUMMARY
-          echo "| Full report | [Open in Lifecycle]($REPORT_URL) |" >> $GITHUB_STEP_SUMMARY
+          # Icon based on policy action
+          if [ "$POLICY_ACTION" = "Failure" ]; then
+            ICON="❌"
+          elif [ "$POLICY_ACTION" = "Warning" ]; then
+            ICON="⚠️"
+          else
+            ICON="✅"
+          fi
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## $ICON Sonatype Lifecycle Scan
+
+          **Policy action:** \`$POLICY_ACTION\`
+
+          ### Violations found
+          | Severity | Count |
+          |----------|-------|
+          | 🔴 Critical | $CRITICAL |
+          | 🟠 High     | $HIGH |
+          | 🟡 Medium   | $MEDIUM |
+          | 🔵 Low      | $LOW |
+
+          ### Report
+          > 🔗 [Open full report in Lifecycle]($REPORT_URL)
+          EOF
 
       - name: Check policy violations
         run: |
           POLICY_ACTION=$(jq -r '.policyAction' target/sonatype-result.json)
+          REPORT_URL=$(jq -r '.reportHtmlUrl' target/sonatype-result.json)
 
           if [ "$POLICY_ACTION" = "Failure" ]; then
-            echo "::error::Build blocked by Sonatype policy violations. Check the report: $(jq -r '.reportHtmlUrl' target/sonatype-result.json)"
+            echo "::error::Build blocked by Sonatype policy violations. Report: $REPORT_URL"
             exit 1
           elif [ "$POLICY_ACTION" = "Warning" ]; then
-            echo "::warning::Policy violations found. Check the report: $(jq -r '.reportHtmlUrl' target/sonatype-result.json)"
+            echo "::warning::Policy violations found. Report: $REPORT_URL"
           else
             echo "Scan passed with no violations"
           fi
