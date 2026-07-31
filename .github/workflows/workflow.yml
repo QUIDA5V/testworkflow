@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Searching for GitHub Actions..."
 
-          find actions \
+          find .github/actions  \
             \( -name "*.yml" -o -name "*.yaml" \) \
             -print0 |
           xargs -0 grep -hE '^[[:space:]]*uses:' |
