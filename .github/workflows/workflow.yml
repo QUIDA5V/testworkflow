@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
 
           CHANGES=false
-          BRANCH="automation/update-github-actions"
+          BRANCH="automation/update-github-actions-${GITHUB_RUN_ID}"
 
           ACTIONS=$(
             find .github/actions -name "action.yml" -print0 |
