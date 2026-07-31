@@ -1,22 +1,28 @@
-name: Check GitHub Action Versions
+name: Update GitHub Actions
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  check-actions:
+  update-actions:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Compare actions with latest version
+      - name: Update GitHub Actions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
+
+          CHANGES=false
 
           ACTIONS=$(
             find .github/actions -name "action.yml" -print0 |
@@ -28,9 +34,7 @@ jobs:
             sort -u
           )
 
-          echo "========================================================"
-          echo "Actions found"
-          echo "========================================================"
+          echo "Actions found:"
           echo "$ACTIONS"
           echo
 
@@ -40,18 +44,21 @@ jobs:
             REPO="${ACTION%@*}"
             CURRENT_REF="${ACTION#*@}"
 
-            ########################################################
+            echo "==========================================="
+            echo "Checking $ACTION"
+
+            ##################################################
             # Current SHA
-            ########################################################
+            ##################################################
             CURRENT_SHA=$(curl -fsSL \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${REPO}/commits/${CURRENT_REF}" \
               | jq -r '.sha')
 
-            ########################################################
+            ##################################################
             # Latest Release (fallback -> Tags)
-            ########################################################
+            ##################################################
             HTTP_CODE=$(curl \
               -s \
               -o latest.json \
@@ -62,7 +69,6 @@ jobs:
 
             if [[ "$HTTP_CODE" == "200" ]]; then
               LATEST_REF=$(jq -r '.tag_name' latest.json)
-              SOURCE="release"
 
             elif [[ "$HTTP_CODE" == "404" ]]; then
               echo "No releases found. Using latest tag."
@@ -73,40 +79,65 @@ jobs:
                 "https://api.github.com/repos/${REPO}/tags" \
                 | jq -r '.[0].name')
 
-              SOURCE="tag"
-
             else
-              echo "Unable to query GitHub API for ${REPO}"
+              echo "Unable to query ${REPO}"
               continue
             fi
 
-            ########################################################
-            # Resolve latest SHA
-            ########################################################
+            ##################################################
+            # Latest SHA
+            ##################################################
             LATEST_SHA=$(curl -fsSL \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${REPO}/commits/${LATEST_REF}" \
               | jq -r '.sha')
 
-            ########################################################
-            # Print
-            ########################################################
+            echo "Current : $CURRENT_REF ($CURRENT_SHA)"
+            echo "Latest  : $LATEST_REF ($LATEST_SHA)"
 
-            echo "--------------------------------------------------------"
-            echo "Repository : $REPO"
-            echo "Current Ref: $CURRENT_REF"
-            echo "Current SHA: $CURRENT_SHA"
-            echo
-            echo "Latest ($SOURCE): $LATEST_REF"
-            echo "Latest SHA      : $LATEST_SHA"
+            ##################################################
+            # Update if necessary
+            ##################################################
+            if [[ "$CURRENT_SHA" != "$LATEST_SHA" ]]; then
 
-            if [[ "$CURRENT_SHA" == "$LATEST_SHA" ]]; then
-              echo "Status          : ✅ Up-to-date"
+              echo "Updating to $LATEST_REF"
+
+              while IFS= read -r FILE; do
+                sed -i \
+                  "s|${ACTION}|${REPO}@${LATEST_REF}|g" \
+                  "$FILE"
+
+                echo "Updated $FILE"
+              done < <(grep -rl --include="action.yml" "$ACTION" .github/actions)
+
+              CHANGES=true
             else
-              echo "Status          : 🔄 Update available"
+              echo "Already up-to-date."
             fi
 
             echo
-
           done <<< "$ACTIONS"
+
+          echo "CHANGES=$CHANGES" >> "$GITHUB_ENV"
+
+      - name: Create Pull Request
+        if: env.CHANGES == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/update-github-actions
+          delete-branch: true
+          commit-message: "chore: update GitHub Actions"
+          title: "chore: update GitHub Actions"
+          body: |
+            ## Summary
+
+            This PR updates GitHub Actions to their latest released versions.
+
+            Generated automatically.
+
+      - name: No updates found
+        if: env.CHANGES != 'true'
+        run: |
+          echo "All GitHub Actions are already up-to-date."
