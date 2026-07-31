@@ -1,0 +1,27 @@
+name: List Public Actions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  list-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: List public actions in wrapper directory
+        shell: bash
+        run: |
+          echo "Searching for GitHub Actions..."
+
+          find actions \
+            \( -name "*.yml" -o -name "*.yaml" \) \
+            -print0 |
+          xargs -0 grep -hE '^[[:space:]]*uses:' |
+          sed -E 's/^[[:space:]]*uses:[[:space:]]*//' |
+          tr -d '"' |
+          tr -d "'" |
+          grep -vE '^(\./|docker://)' |
+          sort -u
