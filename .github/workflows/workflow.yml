@@ -1,4 +1,4 @@
-name: List Public Actions
+name: List Actions and Commit SHA
 
 on:
   workflow_dispatch:
@@ -11,24 +11,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Show repository structure
-        run: |
-          pwd
-          ls -la
-          ls -la .github
-          find .github -maxdepth 3 -type f
-
-      - name: List public actions in wrapper directory
+      - name: Resolve commit SHA
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          echo "Searching for GitHub Actions..."
+          set -euo pipefail
 
-          find .github/actions  \
-            \( -name "*.yml" -o -name "*.yaml" \) \
-            -print0 |
-          xargs -0 grep -hE '^[[:space:]]*uses:' |
-          sed -E 's/^[[:space:]]*uses:[[:space:]]*//' |
-          tr -d '"' |
-          tr -d "'" |
-          grep -vE '^(\./|docker://)' |
-          sort -u
+          ACTIONS=$(
+            find .github/actions -name "action.yml" -print0 |
+            xargs -0 grep -hE '^[[:space:]]*uses:' |
+            sed -E 's/^[[:space:]]*uses:[[:space:]]*//' |
+            tr -d '"' |
+            tr -d "'" |
+            grep -vE '^(\./|docker://)' |
+            sort -u
+          )
+
+          echo "Found Actions:"
+          echo "$ACTIONS"
+          echo
+
+          while read -r ACTION; do
+            [ -z "$ACTION" ] && continue
+
+            REPO="${ACTION%@*}"
+            REF="${ACTION#*@}"
+
+            SHA=$(curl -fsSL \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${REPO}/commits/${REF}" \
+              | jq -r '.sha')
+
+            printf "%-45s -> %s\n" "$ACTION" "$SHA"
+          done <<< "$ACTIONS"
