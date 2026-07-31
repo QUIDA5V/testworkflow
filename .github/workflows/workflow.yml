@@ -1,17 +1,17 @@
-name: List Actions and Commit SHA
+name: Check GitHub Action Versions
 
 on:
   workflow_dispatch:
 
 jobs:
-  list-actions:
+  check-actions:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Resolve commit SHA
+      - name: Compare actions with latest version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -28,7 +28,9 @@ jobs:
             sort -u
           )
 
-          echo "Found Actions:"
+          echo "========================================================"
+          echo "Actions found"
+          echo "========================================================"
           echo "$ACTIONS"
           echo
 
@@ -36,13 +38,75 @@ jobs:
             [ -z "$ACTION" ] && continue
 
             REPO="${ACTION%@*}"
-            REF="${ACTION#*@}"
+            CURRENT_REF="${ACTION#*@}"
 
-            SHA=$(curl -fsSL \
+            ########################################################
+            # Current SHA
+            ########################################################
+            CURRENT_SHA=$(curl -fsSL \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${REPO}/commits/${REF}" \
+              "https://api.github.com/repos/${REPO}/commits/${CURRENT_REF}" \
               | jq -r '.sha')
 
-            printf "%-45s -> %s\n" "$ACTION" "$SHA"
+            ########################################################
+            # Latest Release (fallback -> Tags)
+            ########################################################
+            HTTP_CODE=$(curl \
+              -s \
+              -o latest.json \
+              -w "%{http_code}" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${REPO}/releases/latest")
+
+            if [[ "$HTTP_CODE" == "200" ]]; then
+              LATEST_REF=$(jq -r '.tag_name' latest.json)
+              SOURCE="release"
+
+            elif [[ "$HTTP_CODE" == "404" ]]; then
+              echo "No releases found. Using latest tag."
+
+              LATEST_REF=$(curl -fsSL \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/tags" \
+                | jq -r '.[0].name')
+
+              SOURCE="tag"
+
+            else
+              echo "Unable to query GitHub API for ${REPO}"
+              continue
+            fi
+
+            ########################################################
+            # Resolve latest SHA
+            ########################################################
+            LATEST_SHA=$(curl -fsSL \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${REPO}/commits/${LATEST_REF}" \
+              | jq -r '.sha')
+
+            ########################################################
+            # Print
+            ########################################################
+
+            echo "--------------------------------------------------------"
+            echo "Repository : $REPO"
+            echo "Current Ref: $CURRENT_REF"
+            echo "Current SHA: $CURRENT_SHA"
+            echo
+            echo "Latest ($SOURCE): $LATEST_REF"
+            echo "Latest SHA      : $LATEST_SHA"
+
+            if [[ "$CURRENT_SHA" == "$LATEST_SHA" ]]; then
+              echo "Status          : ✅ Up-to-date"
+            else
+              echo "Status          : 🔄 Update available"
+            fi
+
+            echo
+
           done <<< "$ACTIONS"
