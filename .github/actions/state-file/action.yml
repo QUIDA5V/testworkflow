@@ -29,7 +29,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout target repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7.0.1
       with:
         repository: ${{ inputs.target_repo }}
         ref: ${{ inputs.branch }}
